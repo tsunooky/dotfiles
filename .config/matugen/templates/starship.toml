@@ -1,0 +1,57 @@
+palette = 'matugen'
+
+format = """
+[╭  ](fg:primary)\
+$directory\
+$git_branch\
+$git_status\
+$kubernetes \
+$time \
+\n$character"""
+
+[character]
+format = """
+[╰─$symbol](fg:primary) """
+success_symbol = '[](fg:bold primary)'
+error_symbol = '[](fg:bold error)'
+
+[directory]
+format = '[$path](fg:secondary)'
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+disabled = false
+symbol = ""
+format = '( | [$symbol](fg:tertiary) $branch)'
+
+[git_status]
+disabled = false
+format = '( [$all_status](fg:on_surface_variant))'
+
+[kubernetes]
+disabled = false
+style = "fg:on_surface"
+format = '( | [$context]($style)( in [$namespace]($style)))'
+
+[time]
+disabled = true
+time_format = "%R" # Hour:Minute Format
+format = '| $time'
+
+[palettes.matugen]
+primary = "{{ colors.primary.default.hex }}"
+secondary = "{{ colors.secondary.default.hex }}"
+tertiary = "{{ colors.tertiary.default.hex }}"
+surface = "{{ colors.surface.default.hex }}"
+surface_variant = "{{ colors.surface_variant.default.hex }}"
+background = "{{ colors.background.default.hex }}"
+error = "{{ colors.error.default.hex }}"
+on_primary = "{{ colors.on_primary.default.hex }}"
+on_secondary = "{{ colors.on_secondary.default.hex }}"
+on_tertiary = "{{ colors.on_tertiary.default.hex }}"
+on_surface = "{{ colors.on_surface.default.hex }}"
+on_surface_variant = "{{ colors.on_surface_variant.default.hex }}"
+on_background = "{{ colors.on_background.default.hex }}"
+on_error = "{{ colors.on_error.default.hex }}"
+outline = "{{ colors.outline.default.hex }}"
