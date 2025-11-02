@@ -1,0 +1,30 @@
+# Ignore everything by default
+*
+
+# Git
+!/.git/
+!/.gitignore
+
+# Files at the root
+!/.bashrc
+!/.zshrc # Si tu utilises zsh
+!/.profile
+!/.Xresources
+!/.xinitrc # Pour lancer i3
+
+# Config files
+!/.config/
+!/.config/alacritty/
+!/.config/dunst/
+!/.config/i3/
+!/.config/i3-color/
+!/.config/gtk-3.0/
+!/.config/gtk-4.0/
+!/.config/matugen/
+!/.config/picom/
+!/.config/polybar/
+!/.config/rofi/
+!/.config/starship.toml
+!/.config/btop/
+!/.config/scripts/
+
