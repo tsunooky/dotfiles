@@ -73,6 +73,28 @@ clipfiles()
     ) | xsel -b
 }
 
+gitall() {
+    git add .
+    echo "Current status:"
+    git status
+    echo -n "Enter your commit message (or 'q' to quit): "
+    read msg
+    if [[ "$msg" == "q" ]]; then
+        echo "Operation aborted."
+        return 0
+    fi
+    if [ -z "$msg" ]; then
+        echo "Commit message cannot be empty. Aborting."
+        return 1
+    fi
+    git commit -m "$msg"
+    if [ $? -ne 0 ]; then
+        echo "Commit failed. Aborting push."
+        return 1
+    fi
+    git push
+}
+
 # LSD aliases
 alias ls='lsd'
 alias sl='lsd'
@@ -81,6 +103,7 @@ alias ll='lsd -l'
 alias tree='lsd --tree'
 
 # Custom aliases
+alias update='sudo pacman -Syu'
 alias ff='fastfetch'
 alias bg='~/.config/scripts/change_wallpaper.sh'
 alias rbg='(~/.config/scripts/random_wallpaper.sh &)'
