@@ -1,0 +1,57 @@
+palette = 'matugen'
+
+format = """
+[╭  ](fg:primary)\
+$directory\
+$git_branch\
+$git_status\
+$kubernetes \
+$time \
+\n$character"""
+
+[character]
+format = """
+[╰─$symbol](fg:primary) """
+success_symbol = '[](fg:bold primary)'
+error_symbol = '[](fg:bold error)'
+
+[directory]
+format = '[$path](fg:secondary)'
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+disabled = false
+symbol = ""
+format = '( | [$symbol](fg:tertiary) $branch)'
+
+[git_status]
+disabled = false
+format = '( [$all_status](fg:on_surface_variant))'
+
+[kubernetes]
+disabled = false
+style = "fg:on_surface"
+format = '( | [$context]($style)( in [$namespace]($style)))'
+
+[time]
+disabled = true
+time_format = "%R" # Hour:Minute Format
+format = '| $time'
+
+[palettes.matugen]
+primary = "#8fcef3"
+secondary = "#b5c9d7"
+tertiary = "#cac1ea"
+surface = "#0f1417"
+surface_variant = "#41484d"
+background = "#0f1417"
+error = "#ffb4ab"
+on_primary = "#003549"
+on_secondary = "#20333e"
+on_tertiary = "#322c4c"
+on_surface = "#dfe3e7"
+on_surface_variant = "#c0c7cd"
+on_background = "#dfe3e7"
+on_error = "#690005"
+outline = "#8a9297"
