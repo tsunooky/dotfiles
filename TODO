@@ -1,0 +1,75 @@
+Update every packages:
+sudo pacman -Syu
+
+Proberly remove a package on Arch:
+sudo pacman -Rcns <package>
+
+i3 i3lock-color picom autotiling feh alacritty nano dunst libnotify pavucontrol network-manager-applet scrot
+ttf-jetbrains-mono ttf-jetbrains-mono-nerd
+xsel git git-lfs base-devel glibc gcc gdb make clang vim man-db man-pages grep sed criterion valgrind
+awk tar curl imagemagick xorg-xinit xorg-xrandr brightnessctl lxappearance fastfetch
+neovim tree-sitter-cli lazygit
+lsd
+blueman
+firefox
+starship polybar rofi alsa-utils
+flameshot
+gtk3 gtk4 adw-gtk-theme
+export GTK_THEME="Adwaita:dark"
+thunar-volman gvfs gvfs-mtp
+noto-fonts noto-fonts-emoji noto-fonts-cjk
+
+loading cursor on wallpaper ? problem
+
+add the line :
+ILoveCandy
+to /etc/pacman.conf
+
+faire :
+sudo systemctl enable rfkill-unblock@all
+
+git config --global user.name "your_username"
+git config --global user.email "github@mail.com"
+ssh-keygen -C "github@mail.com" -t ed25519
+xsel -b < ~/.ssh/id_ed25519.pub
+copy and past the key on the clipboard to github SSH settings
+
+then:
+ssh -T git@github.com
+On each repo for github to push with ssh keys:
+git remote set-url origin git@github.com:your-repository.git
+
+seulement si 4k :
+cat ~/.Xressources
+Xft.dpi: 192
+Xft.autohint: 0
+Xft.lcdfilter: lcddefault
+Xft.hintstyle: hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb
+
+
+dans conflybg just avant le execstart:
+ExecStartPre=/usr/bin/printf '%%b' '\e]P01E1E2E\e]P01E1E2E\ec'
+
+yay:
+cd /tmp
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
+cd ..
+
+yay -S python-pywalfox
+install
+https://addons.mozilla.org/firefox/addon/pywalfox/
+sudo pywalfox install
+
+fix internet :
+sudo pacman -S iw dialog wpa_supplicant networkmanager network-manager-applet 
+sudo systemctl enable NetworkManager.service 
+sudo systemctl start NetworkManager.service 
+sudo systemctl enable wpa_supplicant.service 
+sudo systemctl start wpa_supplicant.service 
+sudo nmtui 
+
