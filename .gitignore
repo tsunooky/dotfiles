@@ -8,6 +8,7 @@
 # Files at the root
 !/.bashrc
 !/.xinitrc
+!/TODO
 
 # Config files
 !/.config/
