@@ -30,6 +30,8 @@ exec --no-startup-id nm-applet
 # Set background to last used background
 exec --no-startup-id ~/.fehbg
 
+# unblock wifi
+exec --no-startup-id "rfkill unblock wifi"
 
 # ---------- General i3 settings and keybinds ----------
 
