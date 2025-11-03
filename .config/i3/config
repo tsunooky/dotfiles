@@ -50,8 +50,8 @@ floating_modifier $mod
 # Changes the wallpaper to a random one inside the ~/.wallpapers folder
 bindsym $mod+Shift+w exec --no-startup-id ~/.config/scripts/random_wallpaper.sh
 
-# i3lock with blurred wallpaper
-bindsym $mod+i exec --no-startup-id i3lock -n -i "$HOME/.bg_blurred.png"
+# i3lock with blur
+bindsym $mod+i exec --no-startup-id ~/.config/scripts/lock.sh
 
 # Start a terminal
 bindsym $mod+Return exec --no-startup-id alacritty
