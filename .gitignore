@@ -46,6 +46,7 @@
 !/.config/btop/**
 
 !/.config/starship.toml
+!/.vimrc
 
 # Ignore color
 *color*
