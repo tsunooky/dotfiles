@@ -106,7 +106,7 @@ endfunction
 :inoremap @elif else if ()<CR><BS>{<CR><BS>}<Up><CR>a<BS><Up><Up><Right><Right><Right><Right><Right>
 :inoremap @else else<CR><BS>{<CR><BS>}<Up><CR>a<BS>
 :inoremap @marg int main(int argc, char *argv[])<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>return 0;<Up><CR>
-:inoremap @main int main(void)<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>return 0;<Up><CR>
+::noremap @main int main(void)<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>return 0;<Up><CR>
 :inoremap @std #include <stddef.h><CR>#include <stdio.h><CR>#include <stdlib.h><CR><CR>
 :inoremap @pf printf("\n");<Left><Left><Left><Left><Left>
 :inoremap @struct struct <CR>{<CR>};<Up><Up><Right><Right><Right><Right><Right>
@@ -132,10 +132,11 @@ endfunction
 :highlight MatchParen cterm=NONE ctermfg=lightblue ctermbg=NONE
 :highlight SignColumn NONE
 :highlight SpellCap cterm=bold ctermfg=yellow ctermbg=black
+:highlight Statement cterm=bold ctermfg=darkyellow
 :highlight SyntasticWarningSign cterm=bold ctermfg=yellow ctermbg=black
 :highlight SyntasticErrorSign cterm=bold ctermfg=red ctermbg=black
 :highlight vimError cterm=bold ctermfg=red ctermbg=black
-
+:highlight LineNr cterm=bold ctermfg=darkcyan
 " Plugins
 
 "autocmd VimEnter * NERDTree
@@ -224,3 +225,6 @@ autocmd BufReadPost *
 " Better display when using termdebug
 let g:termdebug_wide=1
 
+" fix Highlight
+autocmd FileType * highlight Statement cterm=bold ctermfg=darkyellow
+autocmd FileType * highlight LineNr cterm=bold ctermfg=darkcyan
