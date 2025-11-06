@@ -13,12 +13,15 @@ sudo pacman -Rcns <package>
 
 sudo pacman -S --needed base-devel git
 i3 i3lock-color picom autotiling feh alacritty nano dunst libnotify pavucontrol network-manager-applet scrot
-ttf-jetbrains-mono ttf-jetbrains-mono-nerd
+ttf-jetbrains-mono-nerd
 xsel git git-lfs base-devel glibc gcc gdb make clang vim man-db man-pages grep sed criterion valgrind
 awk tar curl imagemagick xorg-xinit xorg-xrandr brightnessctl lxappearance fastfetch
 neovim tree-sitter-cli lazygit
 lsd
+unzip
 blueman
+xorg-xinit acpi
+papirus-icon-theme
 firefox
 starship polybar rofi alsa-utils
 flameshot

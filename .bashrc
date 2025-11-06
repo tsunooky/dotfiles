@@ -109,6 +109,7 @@ alias bg='~/.config/scripts/change_wallpaper.sh'
 alias rbg='(~/.config/scripts/random_wallpaper.sh &)'
 alias clsw="rm -r ~/.cache/vim/swap"
 alias makec="make && make check && make clean"
+alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
 
 # Config aliases
 alias conf='cd ~/.config/'

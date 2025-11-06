@@ -3,7 +3,7 @@ import = ["~/.config/alacritty/colors.toml"]
 
 [window]
 opacity = 0.9
-padding = { x = 4, y = 4 }
+padding = { x = 3, y = 3 }
 
 [cursor.style]
 shape = "Beam"
@@ -13,21 +13,9 @@ blinking = "Always"
 blink_interval = 500
 
 [font]
-size = 11.0
-
-[font.normal]
-family = "JetBrainsMono Nerd Font"
-style = "Regular"
-
-[font.bold]
-family = "JetBrainsMono Nerd Font"
-style = "Bold"
-
-[font.italic]
-family = "JetBrainsMono Nerd Font"
-style = "Italic"
-
-[font.bold_italic]
-family = "JetBrainsMono Nerd Font"
-style = "Bold Italic"
+size = 11
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
+bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
 
