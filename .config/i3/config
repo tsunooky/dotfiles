@@ -123,6 +123,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+S exec flameshot gui
 
 # Switch to next workspace
+bindsym $mod+Tab workspace next
 bindsym Mod1+Tab workspace next
 
 # Launch the bluetooth manager
