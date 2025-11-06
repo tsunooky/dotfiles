@@ -57,8 +57,10 @@ endif
 :inoremap <C-s> <Esc>:w<CR>i
 :inoremap <C-q> <Esc>:q!<CR>
 :inoremap <C-f> <Esc>:ClangFormat<CR>i
-:inoremap <C-z> <Esc>:u<CR>i
+:inoremap <C-u> <Esc>:u<CR>i
+:nnoremap <C-u> :u<CR>
 :inoremap <C-y> <Esc>:redo<CR>i
+:nnoremap <C-y> :redo<CR>
 
 :vnoremap <C-c> y
 :vnoremap <C-v> p
