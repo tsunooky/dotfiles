@@ -18,11 +18,11 @@ exec_always --no-startup-id autotiling
 exec_always --no-startup-id picom --config ~/.config/picom/picom.conf --xrender-sync-fence
 
 # Launch polybar
-exec_always --no-startup-id "killall -q polybar; polybar bar1"
+exec_always --no-startup-id "killall -q polybar; polybar main"
 
 # Locks the screen with i3lock after a certain time
 # Use loginctl lock-session to lock your screen
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock -n -i "$HOME/.bg_blurred.png" --nofork
+exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.config/scripts/lock.sh
 
 # Launch NetworkManager
 exec --no-startup-id nm-applet
@@ -62,7 +62,7 @@ bindsym $mod+Return exec --no-startup-id alacritty
 bindsym $mod+Shift+a kill
 
 # Start rofi
-bindsym $mod+d exec --no-startup-id rofi -show drun -font 'JetBrains Mono 11'
+bindsym $mod+d exec --no-startup-id rofi -show drun -font 'JetBrainsMono Nerd Font 12'
 
 # Open power menu
 bindsym $mod+Shift+e exec ~/.config/scripts/powermenu.sh
