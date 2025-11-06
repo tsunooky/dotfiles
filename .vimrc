@@ -93,10 +93,6 @@ endfunction
 :inoremap <C-r> <Esc>:call Run()<CR><Esc>i
 
 :inoremap { {}<Left>
-:inoremap ( ()<Left>
-:inoremap [ []<Left>
-:inoremap " ""<Left>
-:inoremap ' ''<Left>
 
 :inoremap @for for (size_t i = 0; i < ; i++)<CR><BS>{<CR><BS>}<Left><CR><Up><Tab><Up><Up><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right><Right>
 :inoremap @jfor for (size_t j = 0; j < size; j++)<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>
