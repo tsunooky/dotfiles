@@ -40,7 +40,7 @@ xterm*|rxvt*)
 esac
 
 # enable color support of ls and also add handy aliases
-alias ls='ls --color=auto'
+#alias ls='ls --color=auto'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 alias grep='grep --color=auto'
@@ -108,6 +108,7 @@ alias ff='fastfetch'
 alias bg='~/.config/scripts/change_wallpaper.sh'
 alias rbg='(~/.config/scripts/random_wallpaper.sh &)'
 alias clsw="rm -r ~/.cache/vim/swap"
+alias makec="make && make check && make clean"
 
 # Config aliases
 alias conf='cd ~/.config/'
