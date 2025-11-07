@@ -48,5 +48,8 @@
 !/.config/starship.toml
 !/.vimrc
 
+!/.config/scripts/
+!/.config/scripts/**
+
 # Ignore color
 *color*
