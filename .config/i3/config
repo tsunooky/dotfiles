@@ -150,6 +150,6 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec brightnessctl s +8%
-bindsym XF86MonBrightnessDown exec brightnessctl s 8%-
+bindsym XF86MonBrightnessUp exec ~/.config/scripts/brightness.sh up
+bindsym XF86MonBrightnessDown exec ~/.config/scripts/brightness.sh down
 
