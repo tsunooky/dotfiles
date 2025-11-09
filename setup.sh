@@ -10,3 +10,5 @@ cp -a config/. ~/
 i3 reload
 
 dunstify "Finished !" " Mod + Enter : open a terminal\n Mod + d : open dmenu"
+
+exit

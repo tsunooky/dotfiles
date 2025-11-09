@@ -3,4 +3,5 @@ cd /tmp/config
 ./setup.sh
 cd -
 rm -rf /tmp/config
-exit
+source ~/.bashrc
+rbg
