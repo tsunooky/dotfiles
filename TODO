@@ -1,9 +1,10 @@
 During the arch install:
 pacman -S archlinux-keyring
 archinstall
+Faire un guide
 
 Install a package:
-sudo pacman -Syu <package>
+sudo pacman -S <package>
 
 Update every packages:
 sudo pacman -Syu
@@ -11,38 +12,21 @@ sudo pacman -Syu
 Proberly remove a package on Arch:
 sudo pacman -Rcns <package>
 
-sudo pacman -S --needed base-devel git
-i3 i3lock-color picom autotiling feh alacritty nano dunst libnotify pavucontrol network-manager-applet scrot
-ttf-jetbrains-mono-nerd
-xsel git git-lfs base-devel glibc gcc gdb make clang vim man-db man-pages grep sed criterion valgrind
-awk tar curl imagemagick xorg-xinit xorg-xrandr brightnessctl lxappearance fastfetch
+Maybe :
 neovim tree-sitter-cli lazygit
-lsd
-unzip
-blueman
-xorg-xinit acpi
-papirus-icon-theme
-firefox
-starship polybar rofi alsa-utils
-flameshot
-gtk3 gtk4 adw-gtk-theme
-export GTK_THEME="Adwaita:dark"
-thunar-volman gvfs gvfs-mtp
-noto-fonts noto-fonts-emoji noto-fonts-cjk
+BUT NV Chad is probably better
 
-Sounds:
-sudo pacman -S pipewire pipewire-pulse pipewire-alsa wireplumber
-systemctl --user enable --now pipewire.socket
-systemctl --user enable --now wireplumber.service
+Modify alacritty matugen colors
 
-loading cursor on wallpaper ? problem
+Changer cursor ??
 
-add the line :
-ILoveCandy
-to /etc/pacman.conf
+Rofi + powermenu
 
-faire :
-sudo systemctl enable rfkill-unblock@all
+Keybinds helper (maybe rofi) : i3, vim, bashrc commands etc...
+
+README
+
+trier wallpapers, en mettre un par defaut avec bg
 
 git config --global user.name "your_username"
 git config --global user.email "github@mail.com"
@@ -65,28 +49,4 @@ Xft.hinting: 1
 Xft.antialias: 1
 Xft.rgba: rgb
 
-
-dans conflybg just avant le execstart:
-ExecStartPre=/usr/bin/printf '%%b' '\e]P01E1E2E\e]P01E1E2E\ec'
-
-cd ~ && git clone https://aur.archlinux.org/yay-bin.git
-cd ~/yay-bin/ && makepkg -rsi --noconfirm
-cd ~ && rm -Rf ~/yay-bin/
-
-yay -Y --devel --save && yay -Y --gendb
-sed -i 's/"sudoloop": false/"sudoloop": true/' ~/.config/yay/config.json;
-
-
-yay -S python-pywalfox
-install
-https://addons.mozilla.org/firefox/addon/pywalfox/
-sudo pywalfox install
-
-fix internet :
-sudo pacman -S iw dialog wpa_supplicant networkmanager network-manager-applet 
-sudo systemctl enable NetworkManager.service 
-sudo systemctl start NetworkManager.service 
-sudo systemctl enable wpa_supplicant.service 
-sudo systemctl start wpa_supplicant.service 
-sudo nmtui 
-
+Regler problemes de compatibilites avec ecrans 4k : Xressources, polybar, rofi
