@@ -111,6 +111,11 @@ alias clsw="rm -r ~/.cache/vim/swap"
 alias makec="make && make check && make clean"
 alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
 
+# Epita alias
+alias intra="firefox https://intra.forge.epita.fr/"
+alias moodle="firefox https://moodle.epita.fr/my/"
+alias forge="firefox https://cri.epita.fr/"
+
 # Config aliases
 alias conf='cd ~/.config/'
 alias confly='sudo nvim /etc/ly/config.ini'

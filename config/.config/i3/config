@@ -31,7 +31,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id ~/.fehbg
 
 # unblock wifi
-exec --no-startup-id "rfkill unblock wifi"
+exec_always --no-startup-id "rfkill unblock wifi"
 
 # ---------- General i3 settings and keybinds ----------
 
