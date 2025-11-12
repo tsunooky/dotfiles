@@ -83,15 +83,8 @@ alias intra="firefox https://intra.forge.epita.fr/"
 alias moodle="firefox https://moodle.epita.fr/my/"
 alias forge="firefox https://cri.epita.fr/"
 
-# Config aliases
-alias conf='cd ~/.config/'
-alias confly='sudo nvim /etc/ly/config.ini'
-alias conflybg='sudo systemctl edit --full ly.service'
-alias confrc='vim ~/.bashrc'
-alias confi3='vim ~/.config/i3/config'
-alias confmat='vim ~/.config/matugen/config.toml'
-alias conftemp='vim ~/.config/matugen/templates/'
-alias confbar='vim ~/.config/polybar/config.ini'
+# conf alias
+alias conf="~/.config/scripts/edit_config.sh"
 
 # C aliases
 alias gccall='gcc -std=c99 -pedantic -Werror -Wall -Wextra -Wvla *.c -o main'
