@@ -11,4 +11,3 @@ fi
 
 matugen image "$1"
 feh --bg-fill "$1"
-magick "$1" -blur 0x4 "$HOME/.bg_blurred.png"

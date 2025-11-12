@@ -69,11 +69,6 @@
     default_icon = dialog-warning
 
 [discord_simple]
-    # Le filtre
     appname = "discord"
-    # Le format que vous vouliez (ceci va fonctionner)
-    # %s = nom de l'expéditeur
-    format = "<b>%s</b>\na envoyé un message"
-
-    # Le timeout (ceci va aussi fonctionner)
-    timeout = 15
+    format = "<b>%s</b>\nhas sent a message"
+    timeout = 10
