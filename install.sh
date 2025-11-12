@@ -4,5 +4,4 @@ cd /tmp/config
 ./setup.sh
 cd -
 rm -rf /tmp/config
-source ~/.bashrc
-rbg
+~/.config/scripts/random_wallpaper.sh
