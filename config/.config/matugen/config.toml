@@ -48,7 +48,6 @@ post_hook = 'pywalfox update'
 [templates.dunst]
 input_path = '~/.config/matugen/templates/dunstrc'
 output_path = '~/.config/dunst/dunstrc'
-post_hook = 'killall dunst > /dev/null'
 
 # Btop
 [templates.btop]
