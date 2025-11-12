@@ -10,7 +10,7 @@ send_notif()
     dunstify -h string:x-dunst-stack-tag:brightness "Brightness : $percent%" -t 2000
 }
 
-STEP=8
+STEP=5
 
 case "$1" in 
     up)
