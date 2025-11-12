@@ -45,3 +45,14 @@ output_path = '~/.config/gtk-3.0/colors.css'
 [templates.gtk4]
 input_path = '~/.config/matugen/templates/gtk.css'
 output_path = '~/.config/gtk-4.0/colors.css'
+
+# dunst
+[templates.dunst]
+input_path = '~/.config/matugen/templates/dunstrc'
+output_path = '~/.config/dunst/dunstrc'
+post_hook = 'killall dunst > /dev/null'
+
+# i3lock
+[templates.i3lock]
+input_path = '~/.config/matugen/templates/lock.sh'
+output_path = '~/.config/scripts/lock.sh'
