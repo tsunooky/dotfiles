@@ -1,4 +1,4 @@
-sudo pacman -S git
+sudo pacman -S --no-confirm --needed git
 git clone https://github.com/tsunooky/dotfiles.git /tmp/config
 cd /tmp/config
 ./setup.sh

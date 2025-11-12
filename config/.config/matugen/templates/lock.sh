@@ -1,28 +1,21 @@
 #!/bin/sh
 
-CACHE_FILE="$HOME/.cache/wal/colors.json"
+blank="00000000"
+circle_bg={{colors.on_primary.default.hex}}
+circle={{colors.primary.default.hex}}
+error={{colors.error.default.hex}}
 
-if [ ! -f "$CACHE_FILE" ]; then
-    notify-send -t 5000 -u critical "ERROR IN LOCK.SH" " $CACHE_FILE does not exist"
-    exit 1
-fi
-
-BLANK="00000000"
-COLOR1=$(jq -r '.colors.color4' "$CACHE_FILE")
-COLOR2=$(jq -r '.colors.color2' "$CACHE_FILE")
-COLOR3=$(jq -r '.colors.color1' "$CACHE_FILE")
-
-i3lock -c $BLANK \
+i3lock -c $blank \
     --indicator \
-    --inside-color=$BLANK \
-    --insidever-color=$BLANK \
-    --insidewrong-color=$BLANK \
-    --ring-color=$COLOR1 \
-    --ringver-color=$COLOR2 \
-    --ringwrong-color=$COLOR3 \
-    --keyhl-color=$COLOR2 \
-    --bshl-color=$COLOR3 \
-    --line-color=$BLANK \
-    --verif-color=$COLOR2 \
-    --wrong-color=$COLOR3 \
-    --modif-color=$COLOR1 \
+    --inside-color=$blank \
+    --insidever-color=$blank \
+    --insidewrong-color=$blank \
+    --ring-color=$circle_bg \
+    --ringver-color=$circle \
+    --ringwrong-color=$error \
+    --keyhl-color=$circle \
+    --bshl-color=$error \
+    --line-color=$blank \
+    --verif-color=$circle \
+    --wrong-color=$error \
+    --modif-color=$circle_bg \
