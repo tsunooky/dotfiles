@@ -6,10 +6,6 @@ foreground = '{{colors.on_surface.default.hex}}'
 text = '{{colors.on_surface.default.hex}}'
 cursor = '{{colors.on_surface_variant.default.hex}}' 
  
-[colors.vi_mode_cursor]
-text = '{{colors.background.default.hex}}'
-cursor = '{{colors.primary.default.hex}}' 
- 
 [colors.search.matches]
 foreground = '{{colors.surface_variant.default.hex}}' 
 background = '{{colors.tertiary.default.hex}}' 
