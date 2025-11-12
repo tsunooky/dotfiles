@@ -25,8 +25,8 @@ sudo systemctl start NetworkManager.service
 sudo systemctl enable wpa_supplicant.service
 sudo systemctl start wpa_supplicant.service
 
-sudo systemctl --user enable --now pipewire.socket
-sudo systemctl --user enable --now wireplumber.service
+systemctl --user enable --now pipewire.socket
+systemctl --user enable --now wireplumber.service
 
 sudo systemctl enable --now ly.service
 
