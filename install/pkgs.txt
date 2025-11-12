@@ -2,7 +2,6 @@ linux
 linux-firmware
 grub
 efibootmgr
-sudo
 openssh
 
 git
@@ -66,7 +65,10 @@ unzip
 unrar
 
 ttf-jetbrains-mono-nerd
-noto-fonts-{cjk,emoji,extra}
+noto-fonts
+noto-fonts-extra
+nono-fonts-emoji
+noto-fonts-cjk
 
 i3-wm
 xss-lock
