@@ -26,7 +26,7 @@ autocmd("Signal", {
 
 nvim --headless "+Lazy! sync" "+MasonInstallAll" +qa
 
-sed -i '/M.base46 = {/,/}/ s/theme = .*,/theme = "chadwal",/' ~/.config/nvim/lua/custom/chadrc.lua
+sed -i '/M.base46 = {/,/}/ s/theme = .*,/theme = "chadwal",/' ~/.config/nvim/lua/chadrc.lua
 
 rm -rf ~/.config/nvim/.git
 
