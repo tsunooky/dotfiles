@@ -44,7 +44,7 @@ gaps inner 6
 set $mod Mod4
 
 # Set i3 font to JetBrains Mono
-font pango:JetBrains Mono 12
+font pango:JetBrains Mono 11
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -62,7 +62,7 @@ bindsym $mod+Return exec --no-startup-id alacritty
 bindsym $mod+Shift+a kill
 
 # Start rofi
-bindsym $mod+d exec --no-startup-id rofi -show drun -font 'JetBrainsMono Nerd Font 12'
+bindsym $mod+d exec --no-startup-id rofi -show drun -dpi 1
 
 # Open power menu
 bindsym $mod+Shift+e exec ~/.config/scripts/powermenu.sh

@@ -1,7 +1,7 @@
 palette = 'matugen'
 
 format = """
-[╭   ](fg:primary)\
+[╭  ](fg:primary)\
 $directory\
 $git_branch\
 $git_commit\

@@ -39,7 +39,6 @@ dunst
 libnotify
 feh
 scrot
-jq
 
 fontconfig
 lxappearance
@@ -86,3 +85,5 @@ valgrind
 
 firefox
 flameshot
+yazi
+zathura

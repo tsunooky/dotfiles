@@ -3,17 +3,30 @@
 reload_apps = true
 run_after = [["touch", "~/.config/alacritty/alacritty.toml"],]
 
+[config.reload_apps_list]
+gtk_theme = true
+
 # i3
 [templates.i3]
 input_path = '~/.config/matugen/templates/i3.conf'
 output_path = '~/.config/i3/colors.conf'
 post_hook = 'i3 reload > /dev/null'
 
+# i3lock
+[templates.i3lock]
+input_path = '~/.config/matugen/templates/lock.sh'
+output_path = '~/.config/scripts/lock.sh'
+
 # Polybar
 [templates.polybar]
 input_path = '~/.config/matugen/templates/polybar.ini'
 output_path = '~/.config/polybar/colors.ini'
 post_hook = 'polybar-msg cmd restart > /dev/null'
+
+# Rofi
+[templates.rofi]
+input_path = '~/.config/matugen/templates/rofi.rasi'
+output_path = '~/.config/rofi/colors.rasi'
 
 # Alacritty
 [templates.alacritty]
@@ -25,16 +38,32 @@ output_path = '~/.config/alacritty/colors.toml'
 input_path = '~/.config/matugen/templates/starship.toml'
 output_path = '~/.config/starship.toml'
 
-# Rofi
-[templates.rofi]
-input_path = '~/.config/matugen/templates/rofi.rasi'
-output_path = '~/.config/rofi/colors.rasi'
-
 # Pywalfox
 [templates.pywalfox]
 input_path = '~/.config/matugen/templates/pywalfox.json'
 output_path = '~/.cache/wal/colors.json'
 post_hook = 'pywalfox update'
+
+# Dunst
+[templates.dunst]
+input_path = '~/.config/matugen/templates/dunstrc'
+output_path = '~/.config/dunst/dunstrc'
+post_hook = 'killall dunst > /dev/null'
+
+# Btop
+[templates.btop]
+input_path = "~/.config/matugen/templates/btop.theme"
+output_path = "~/.config/btop/themes/matugen.theme"
+
+# Zathura
+[templates.zathura]
+input_path = "~/.config/matugen/templates/zathura"
+output_path = "~/.config/zathura/zathurarc"
+
+# Yazi
+[templates.yazi]
+input_path = "~/.config/matugen/templates/yazi.toml"
+output_path = "~/.config/yazi/theme.toml"
 
 # Gtk 3
 [templates.gtk3]
@@ -46,13 +75,44 @@ output_path = '~/.config/gtk-3.0/colors.css'
 input_path = '~/.config/matugen/templates/gtk.css'
 output_path = '~/.config/gtk-4.0/colors.css'
 
-# dunst
-[templates.dunst]
-input_path = '~/.config/matugen/templates/dunstrc'
-output_path = '~/.config/dunst/dunstrc'
-post_hook = 'killall dunst > /dev/null'
+# Qt 5
+[templates.qt5ct]
+input_path = "~/.config/matugen/templates/qtct.conf"
+output_path = "~/.config/qt5ct/colors/matugen.conf"
 
-# i3lock
-[templates.i3lock]
-input_path = '~/.config/matugen/templates/lock.sh'
-output_path = '~/.config/scripts/lock.sh'
+# Qt 6
+[templates.qt6ct]
+input_path = "~/.config/matugen/templates/qtct.conf"
+output_path = "~/.config/qt6ct/colors/matugen.conf"
+
+# NV Chad
+[templates.nvim]
+input_path = '~/.config/nvim/pywal/matugen.lua'
+output_path = '~/.cache/wal/base46-dark.lua'
+[templates.nvimlight]
+input_path = '~/.config/nvim/pywal/matugen.lua'
+output_path = '~/.cache/wal/base46-light.lua'
+[templates.pywal]
+input_path = '~/.config/nvim/pywal/waltemplate'
+output_path = '~/.cache/wal/colors'
+[config.custom_colors.red]
+color = "#FF0000"
+blend = true
+[config.custom_colors.green]
+color = "#00FF00"
+blend = true
+[config.custom_colors.yellow]
+color = "#FFFF00"
+blend = true
+[config.custom_colors.blue]
+color = "#0000FF"
+blend = true
+[config.custom_colors.magenta]
+color = "#FF00FF"
+blend = true
+[config.custom_colors.cyan]
+color = "#00FFFF"
+blend = true
+[config.custom_colors.white]
+color = "#FFFFFF"
+blend = true
