@@ -67,6 +67,9 @@ bindsym $mod+d exec --no-startup-id rofi -show drun -dpi 1
 # Open power menu
 bindsym $mod+Shift+e exec ~/.config/scripts/powermenu.sh
 
+# Open edit conf
+bindsym $mod+c exec ~/.config/scripts/edit_config.sh
+
 # Change focus
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
