@@ -10,6 +10,7 @@ sudo pacman -S --noconfirm --needed $(cat install/pkgs.txt)
 ./install/i3lock-color-install.sh
 ./install/yay-install.sh
 ./install/pywal-fox-install.sh
+./install/nv-chad-install.sh
 yay -S --noconfirm --answerdiff None --answerclean None matugen-bin
 
 
