@@ -7,8 +7,7 @@
 /*****----- Configuration -----*****/
 configuration {
     modi:                        "drun";
-    icon-theme:                  "Papirus";
-    show-icons:                  true;
+    show-icons:                  false;
     display-drun:                " ";
     drun-display-format:         "{name}";
 }
@@ -49,7 +48,7 @@ mainbox {
 /*****----- Inputbar -----*****/
 inputbar {
     enabled:                     true;
-    spacing:                     3px;
+    spacing:                     10px;
     margin:                      0px;
     padding:                     15px;
     border:                      0px solid;
@@ -77,7 +76,7 @@ entry {
     background-color:            inherit;
     text-color:                  inherit;
     cursor:                      text;
-    placeholder:                 "Search...";
+    placeholder:                 "...";
     placeholder-color:           inherit;
 }
 
