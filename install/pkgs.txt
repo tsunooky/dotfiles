@@ -67,7 +67,7 @@ unrar
 ttf-jetbrains-mono-nerd
 noto-fonts
 noto-fonts-extra
-nono-fonts-emoji
+noto-fonts-emoji
 noto-fonts-cjk
 
 i3-wm

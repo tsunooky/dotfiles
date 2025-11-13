@@ -1,10 +1,10 @@
 #!/bin/sh
 
-sudo pacman -S --no-confirm --needed ripgrep python python-pywal python-watchdog neovim gcc make
+sudo pacman -S --noconfirm --needed ripgrep python python-pywal python-watchdog neovim gcc make
 
 rm -rf ~/.config/nvim
 rm -rf ~/.local/state/nvim
-rm -rf ~/.local/share/nvimi
+rm -rf ~/.local/share/nvim
 
 git clone https://github.com/NvChad/starter ~/.config/nvim
 git clone https://github.com/NvChad/pywal ~/.config/nvim/pywal
