@@ -3,7 +3,7 @@
 
 set4k()
 {
-
+    sed -i "s/{{DPI}}/192/g" ~/.config/polybar/config.ini
     echo "Xft.dpi: 192
 Xft.autohint: 0
 Xft.lcdfilter: lcddefault
