@@ -34,6 +34,6 @@ sudo systemctl enable --now ly.service
 
 #alacritty & disown && exit
 
-dunstify "Finished !" " Mod + Enter : open a terminal\n Mod + d : open dmenu"
+./install/user-preferences.sh
 
 exit
