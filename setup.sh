@@ -32,3 +32,5 @@ sudo systemctl enable ly.service
 
 chmod +x ./install/user-preferences.sh
 bash ./install/user-preferences.sh
+
+echo "bg ~/.wallpapers/default.jpeg" > ~/.fehbg
