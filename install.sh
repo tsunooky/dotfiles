@@ -5,3 +5,5 @@ cd /tmp/config
 cd -
 rm -rf /tmp/config
 ~/.config/scripts/random_wallpaper.sh
+
+reboot
