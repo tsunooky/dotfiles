@@ -30,6 +30,5 @@ systemctl --user enable wireplumber.service
 
 sudo systemctl enable ly.service
 
-./install/user-preferences.sh
-
-exit
+chmod +x ./install/user-preferences.sh
+bash ./install/user-preferences.sh
