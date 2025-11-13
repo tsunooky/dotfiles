@@ -16,6 +16,8 @@ yay -S --noconfirm --answerdiff None --answerclean None matugen-bin
 
 cp -a config/. ~/
 
+./install/vim-install.sh
+
 export GTK_THEME="Adwaita:dark"
 i3 reload
 fc-cache -f
