@@ -1,17 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
-# --- Configuration ---
-TERMINAL=${TERMINAL:-alacritty} # Default terminal. Overridden by $TERMINAL.
-CONFIG_LIST="$HOME/.config/scripts/config.list" # Path to the config list.
-DELIM="::" # Delimiter between display name and file path.
-
-# --- Functions ---
+TERMINAL=${TERMINAL:-alacritty}
+CONFIG_LIST="$HOME/.config/scripts/config.list"
+DELIM="::"
 
 show_menu() {
     mkdir -p "$(dirname "$CONFIG_LIST")"
     touch "$CONFIG_LIST"
 
-    # Extract just the names (before '::') for Rofi.
     options=$(awk -F "$DELIM" '{print $1}' "$CONFIG_LIST" | sort)
 
     if [[ -z "$options" ]]; then
@@ -19,13 +15,10 @@ show_menu() {
         exit 1
     fi
 
-    choice=$(echo -e "$options" | rofi -dmenu -i -p "🔧 Edit Config:")
+    choice=$(echo -e "$options" | rofi -dmenu -i -p "   Edit Config:" -dpi 1 -theme "$HOME/.config/rofi/edit_config.rasi")
 
     if [[ -n "$choice" ]]; then
-        # Find the path corresponding to the chosen name.
         file_to_edit=$(grep "^${choice}${DELIM}" "$CONFIG_LIST" | awk -F "$DELIM" '{print $2}')
-
-        # Expand tilde (~) and $HOME variables.
         file_to_edit=$(echo "$file_to_edit" | sed "s|^~|$HOME|; s|\$HOME|$HOME|g")
 
         if [[ -n "$file_to_edit" ]]; then
@@ -48,7 +41,6 @@ add_config() {
         exit 1
     fi
 
-    # Check for duplicate names.
     if grep -q "^${name}${DELIM}" "$CONFIG_LIST"; then
         rofi -e "Error: The name '$name' already exists."
         exit 1
@@ -57,8 +49,6 @@ add_config() {
     echo "${name}${DELIM}${path}" >> "$CONFIG_LIST"
     rofi -e "Config '$name' added!"
 }
-
-# --- Main Logic ---
 
 case "$1" in
     -a)
@@ -72,3 +62,4 @@ case "$1" in
         show_menu
         ;;
 esac
+
