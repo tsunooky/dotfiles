@@ -15,7 +15,7 @@ yay -S --noconfirm --answerdiff None --answerclean None matugen-bin
 
 cp -a config/. ~/
 
-./install/vim-install.sh
+./install/vim-install.sh 
 
 export GTK_THEME="Adwaita:dark"
 fc-cache -f
@@ -32,5 +32,3 @@ sudo systemctl enable ly.service
 
 chmod +x ./install/user-preferences.sh
 bash ./install/user-preferences.sh
-
-echo "bg ~/.wallpapers/default.jpeg" > ~/.fehbg
