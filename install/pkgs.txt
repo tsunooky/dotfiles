@@ -9,6 +9,7 @@ git-lfs
 fuse3
 os-prober
 ntfs-3g
+xorg-server
 xorg-xinit
 xorg-xrandr
 man-pages
@@ -67,7 +68,7 @@ unrar
 ttf-jetbrains-mono-nerd
 noto-fonts
 noto-fonts-extra
-noto-fonts-emoji
+notj'o-fonts-emoji
 noto-fonts-cjk
 
 i3-wm
