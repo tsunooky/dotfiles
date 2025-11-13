@@ -55,16 +55,6 @@ post_hook = 'dunstctl reload'
 input_path = "~/.config/matugen/templates/btop.theme"
 output_path = "~/.config/btop/themes/matugen.theme"
 
-# Zathura
-[templates.zathura]
-input_path = "~/.config/matugen/templates/zathura"
-output_path = "~/.config/zathura/zathurarc"
-
-# Yazi
-[templates.yazi]
-input_path = "~/.config/matugen/templates/yazi.toml"
-output_path = "~/.config/yazi/theme.toml"
-
 # Gtk 3
 [templates.gtk3]
 input_path = '~/.config/matugen/templates/gtk.css'

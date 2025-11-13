@@ -16,6 +16,7 @@ man-pages
 man-db
 nano
 vim
+neovim
 alacritty
 ly
 
@@ -38,10 +39,8 @@ brightnessctl
 dunst
 libnotify
 feh
-scrot
 
 fontconfig
-lxappearance
 gtk3
 gtk4
 adw-gtk-theme
@@ -49,9 +48,7 @@ thunar-volman
 gvfs
 gvfs-mtp
 lsd
-rofi
 papirus-icon-theme
-starship
 
 python
 fastfetch
@@ -76,6 +73,8 @@ xss-lock
 picom
 autotiling
 polybar
+rofi
+starship
 
 base-devel
 glibc
@@ -88,5 +87,3 @@ valgrind
 
 firefox
 flameshot
-yazi
-zathura
