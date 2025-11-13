@@ -4,6 +4,6 @@ cd /tmp/config
 ./setup.sh
 cd -
 rm -rf /tmp/config
-~/.config/scripts/random_wallpaper.sh
 
+echo "end"
 sudo reboot
