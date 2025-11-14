@@ -10,7 +10,7 @@ sudo pacman -S --noconfirm --needed $(cat install/pkgs.txt)
 ./install/i3lock-color-install.sh
 ./install/yay-install.sh
 ./install/nv-chad-install.sh
-./install/pywal-fox-install.sh
+./install/firefox.sh
 yay -S --noconfirm --answerdiff None --answerclean None matugen-bin
 
 cp -a config/. ~/
