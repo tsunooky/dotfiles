@@ -24,10 +24,6 @@ HISTFILESIZE=2000
 HISTIGNORE="&:[bf]g:exit:ls:lsd:ll:la:sl:clear:history"
 shopt -s histappend
 
-# Search in the history based on what is already typed
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
