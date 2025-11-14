@@ -176,7 +176,7 @@ install_packages() {
     fi
 }
 
-# Run installation script with live output (shows last 3 lines)
+# Run installation script with live output (shows last 3 lines, unbuffered)
 run_script() {
     local script="$1"
     local description="$2"
@@ -197,26 +197,45 @@ run_script() {
     
     # Create temporary file for output
     local tmp_output=$(mktemp)
+    local last_size=0
     
-    # Run script in background
-    bash "$script" > "$tmp_output" 2>&1 &
+    # Run script in background with unbuffered output
+    stdbuf -oL -eL bash "$script" > "$tmp_output" 2>&1 &
     local pid=$!
     
-    # Monitor progress - show last 3 lines
+    # Reserve space for 3 lines
     echo ""
+    echo ""
+    echo ""
+    
+    # Monitor progress - show last 3 lines
     while kill -0 $pid 2>/dev/null; do
-        clear_lines="\033[2K\r\033[1A\033[2K\r\033[1A\033[2K\r"
-        printf "$clear_lines"
-        tail -n 3 "$tmp_output" 2>/dev/null | sed 's/^/  /'
-        sleep 0.5
+        local current_size=$(stat -c%s "$tmp_output" 2>/dev/null || echo "0")
+        
+        # Only update if file has grown
+        if [ "$current_size" -gt "$last_size" ]; then
+            # Move cursor up 3 lines and clear them
+            printf "\033[3A"
+            printf "\033[J"
+            
+            # Show last 3 lines with indentation
+            tail -n 3 "$tmp_output" 2>/dev/null | while IFS= read -r line; do
+                echo "  $line"
+            done
+            
+            last_size=$current_size
+        fi
+        
+        sleep 0.3
     done
     
     # Wait for process to finish
     wait $pid
     local exit_code=$?
     
-    # Clear the 3 lines
-    printf "\033[2K\r\033[1A\033[2K\r\033[1A\033[2K\r"
+    # Move cursor up 3 lines and clear
+    printf "\033[3A"
+    printf "\033[J"
     
     # Save to log
     cat "$tmp_output" >> "$LOG_FILE"
