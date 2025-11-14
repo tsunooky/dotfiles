@@ -59,11 +59,29 @@ log() {
 
 # Cleanup function
 cleanup_on_error() {
-    log ERROR "Installation failed. Cleaning up..."
+    local exit_code=$?
     
+    log ERROR "Installation failed with exit code: $exit_code"
+    log ERROR "Cleaning up..."
+    
+    # Restore backups
     if [ -d "$BACKUP_DIR" ] && [ "$(ls -A $BACKUP_DIR 2>/dev/null)" ]; then
         log INFO "Restoring configuration backups..."
         cp -rf "$BACKUP_DIR"/* ~/ 2>/dev/null || true
+        log SUCCESS "Backups restored"
+    fi
+    
+    # Clean up temporary installation directory
+    cd ~
+    if [[ "${SCRIPT_DIR}" == /tmp/* ]]; then
+        log INFO "Removing temporary installation files..."
+        rm -rf "${SCRIPT_DIR}" 2>/dev/null || true
+    fi
+    
+    # Clean up any partial yay installation
+    if [ -d ~/yay-bin ]; then
+        log INFO "Cleaning up yay installation..."
+        rm -rf ~/yay-bin
     fi
     
     log INFO "Logs saved in: $LOG_DIR"
@@ -74,11 +92,15 @@ cleanup_on_error() {
         printf '%s\n' "${FAILED_PACKAGES[@]}" | tee -a "$FAILED_PACKAGES_FILE"
     fi
     
+    echo ""
+    log ERROR "Installation aborted. System has been cleaned up."
+    
     exit 1
 }
 
-# Trap errors
+# Trap errors - stop on any error
 trap cleanup_on_error ERR INT TERM
+set -e
 
 # Check if package is installed
 is_installed() {
@@ -133,46 +155,51 @@ install_packages() {
     done
     
     if [ ${#failed_in_category[@]} -gt 0 ]; then
-        log WARNING "Failed packages in $category:"
+        log ERROR "Failed to install packages in $category:"
         for pkg in "${failed_in_category[@]}"; do
-            log WARNING "  - $pkg"
+            log ERROR "  - $pkg"
         done
         
         echo ""
-        read -p "Continue despite errors? [y/N] " response < /dev/tty
-        if [[ ! "$response" =~ ^[yY]$ ]]; then
-            log ERROR "Installation cancelled by user"
-            cleanup_on_error
-        fi
+        log ERROR "Critical packages failed. Installation cannot continue."
+        cleanup_on_error
     fi
 }
 
-# Run installation script
+# Run installation script with detailed logging
 run_script() {
     local script="$1"
     local description="$2"
+    local optional="${3:-false}"
     
     if [ ! -f "$script" ]; then
         log ERROR "Script not found: $script"
+        if [ "$optional" = "true" ]; then
+            log WARNING "Skipping optional script"
+            return 0
+        fi
         return 1
     fi
     
     log STEP "$description"
+    log INFO "Running: $script"
     
     chmod +x "$script"
     
-    if bash "$script" >> "$LOG_FILE" 2>> "$ERROR_LOG"; then
+    # Run with visible output for important scripts
+    if bash "$script" 2>&1 | tee -a "$LOG_FILE"; then
         log SUCCESS "$description completed"
         return 0
     else
         log ERROR "Failed: $description"
+        log ERROR "Check $ERROR_LOG for details"
         
-        echo ""
-        read -p "Continue despite this error? [y/N] " response < /dev/tty
-        if [[ ! "$response" =~ ^[yY]$ ]]; then
-            return 1
+        if [ "$optional" = "true" ]; then
+            log WARNING "Optional script failed, continuing..."
+            return 0
         fi
-        return 0
+        
+        return 1
     fi
 }
 
@@ -191,10 +218,10 @@ clear
 cat << "EOF"
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║        Arch Linux Configuration Installer                ║
+║        Arch Linux Configuration Installer                 ║
 ║                                                           ║
-║  This will install a complete system with i3wm,          ║
-║  polybar, neovim and all necessary tools.                ║
+║  This will install a complete system with i3wm,           ║
+║  polybar, neovim and all necessary tools.                 ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
 EOF
@@ -283,8 +310,35 @@ install_packages "Themes and Fonts" \
 
 # Applications
 install_packages "Applications" \
-    alacritty neovim firefox \
+    alacritty firefox vim \
     python imagemagick xsel fastfetch ncdu bat yazi zathura
+
+# Ask about Neovim
+echo ""
+log STEP "Editor Configuration"
+read -p "Do you want to install Neovim? [Y/n] " nvim_response < /dev/tty
+nvim_response="${nvim_response:-y}"
+nvim_response=$(echo "$nvim_response" | tr '[:upper:]' '[:lower:]')
+
+USE_NVCHAD=false
+
+if [[ "$nvim_response" == "y" ]] || [[ "$nvim_response" == "yes" ]]; then
+    install_packages "Neovim" neovim
+    
+    echo ""
+    read -p "Do you want to install NvChad configuration? [Y/n] " nvchad_response < /dev/tty
+    nvchad_response="${nvchad_response:-y}"
+    nvchad_response=$(echo "$nvchad_response" | tr '[:upper:]' '[:lower:]')
+    
+    if [[ "$nvchad_response" == "y" ]] || [[ "$nvchad_response" == "yes" ]]; then
+        USE_NVCHAD=true
+        log INFO "NvChad will be installed"
+    else
+        log INFO "Neovim will be installed without NvChad"
+    fi
+else
+    log INFO "Neovim will not be installed"
+fi
 
 # Development tools
 install_packages "Development Tools" \
@@ -293,24 +347,40 @@ install_packages "Development Tools" \
 # Display manager
 install_packages "Display Manager" ly
 
-# Custom installations
+# Custom installations - i3lock-color with detailed logging
+log STEP "Compiling i3lock-color"
+log INFO "This may take a few minutes..."
+log INFO "Installing build dependencies..."
 run_script "./install/i3lock-color-install.sh" "i3lock-color compilation"
+
+# AUR helper installation
+log STEP "Installing AUR helper (yay)"
+log INFO "Cloning and building yay from AUR..."
 run_script "./install/yay-install.sh" "AUR helper (yay)"
 
 # Install AUR packages
 log STEP "Installing AUR packages"
 if command -v yay &>/dev/null; then
-    if yay -S --noconfirm --answerdiff None --answerclean None matugen-bin >> "$LOG_FILE" 2>> "$ERROR_LOG"; then
+    log INFO "Installing matugen-bin for color scheme generation..."
+    if yay -S --noconfirm --answerdiff None --answerclean None matugen-bin 2>&1 | tee -a "$LOG_FILE"; then
         log SUCCESS "matugen-bin installed"
     else
         log WARNING "Failed to install matugen-bin"
+        log WARNING "Color scheme generation may not work"
     fi
 else
     log WARNING "yay not available, skipping AUR packages"
 fi
 
-# NvChad
-run_script "./install/nv-chad-install.sh" "NvChad configuration"
+# NvChad installation
+if [ "$USE_NVCHAD" = true ]; then
+    log STEP "Installing NvChad"
+    log INFO "Backing up existing Neovim configuration..."
+    log INFO "Cloning NvChad repository..."
+    run_script "./install/nv-chad-install.sh" "NvChad configuration"
+else
+    log INFO "Skipping NvChad installation"
+fi
 
 # Backup existing configs
 log STEP "Backing up existing configurations"
@@ -328,7 +398,9 @@ else
     log ERROR "Config directory not found"
 fi
 
-# Vim plugins
+# Vim plugins (always installed)
+log STEP "Installing Vim plugins"
+log INFO "Installing Vundle plugin manager..."
 run_script "./install/vim-install.sh" "Vim plugins"
 
 # User preferences
@@ -381,9 +453,9 @@ echo ""
 echo "╔═══════════════════════════════════════════════════════════╗"
 echo "║                                                           ║"
 if [ $INSTALL_FAILED -eq 0 ]; then
-    echo -e "║  ${GREEN}✓ Installation completed successfully!${NC}                ║"
+    echo -e "║  ${GREEN}✓ Installation completed successfully!${NC}                   ║"
 else
-    echo -e "║  ${YELLOW}⚠ Installation completed with warnings${NC}                ║"
+    echo -e "║  ${YELLOW}⚠ Installation completed with warnings${NC}                  ║"
 fi
 echo "║                                                           ║"
 echo "╚═══════════════════════════════════════════════════════════╝"
