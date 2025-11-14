@@ -122,6 +122,8 @@ alias gc='git commit -m'
 alias gp='git push'
 alias gl='git log --oneline --graph --decorate'
 alias gd='batdiff'
+alias gt='git tag -ma'
+alias gpt='git push --follow-tags'
 
 # Custom aliases
 alias update='sudo pacman -Syu'
@@ -130,9 +132,10 @@ alias bg='~/.config/scripts/change_wallpaper.sh'
 alias rbg='(~/.config/scripts/random_wallpaper.sh &)'
 alias clsw="rm -r ~/.cache/vim/swap"
 alias makec="make && make check && make clean"
-alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
+
 
 # Epita alias
+alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
 alias intra="firefox https://intra.forge.epita.fr/"
 alias moodle="firefox https://moodle.epita.fr/my/"
 alias forge="firefox https://cri.epita.fr/"
