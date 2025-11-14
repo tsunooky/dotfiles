@@ -364,9 +364,80 @@ if ! sudo -v; then
 fi
 log SUCCESS "Sudo access granted"
 
-# Update system
+# Update system with live output
 log STEP "Updating system"
-if ! sudo pacman -Syu --noconfirm 2>&1 | tee -a "$LOG_FILE"; then
+
+# Create temporary file for output
+tmp_update=$(mktemp)
+lines_displayed=0
+
+# Run pacman update in background
+sudo pacman -Syu --noconfirm > "$tmp_update" 2>&1 &
+update_pid=$!
+
+# Monitor progress - show last 3 lines
+last_line_count=0
+wait_time=0
+
+while kill -0 $update_pid 2>/dev/null; do
+    current_line_count=$(wc -l < "$tmp_update" 2>/dev/null || echo "0")
+    
+    if [ "$current_line_count" -gt "$last_line_count" ]; then
+        wait_time=0
+        
+        # Clear previous lines
+        if [ $lines_displayed -gt 0 ]; then
+            for ((i=0; i<lines_displayed; i++)); do
+                printf "\033[1A\033[2K"
+            done
+        fi
+        
+        # Get last 3 lines and display them
+        output_lines=$(tail -n 3 "$tmp_update" 2>/dev/null)
+        lines_displayed=$(echo "$output_lines" | wc -l)
+        
+        if [ $lines_displayed -gt 0 ]; then
+            echo "$output_lines" | sed 's/^/  /'
+        fi
+        
+        last_line_count=$current_line_count
+    else
+        wait_time=$((wait_time + 1))
+        if [ $wait_time -gt 3 ]; then
+            if [ $lines_displayed -gt 0 ]; then
+                for ((i=0; i<lines_displayed; i++)); do
+                    printf "\033[1A\033[2K"
+                done
+            fi
+            
+            local spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+            local idx=$((wait_time % 10))
+            printf "  ${CYAN}${spinner[$idx]}${NC} Updating...\n"
+            lines_displayed=1
+        fi
+    fi
+    
+    sleep 0.5
+done
+
+# Wait for completion
+wait $update_pid
+update_exit_code=$?
+
+# Clear displayed lines
+if [ $lines_displayed -gt 0 ]; then
+    for ((i=0; i<lines_displayed; i++)); do
+        printf "\033[1A\033[2K"
+    done
+fi
+
+# Save to log
+cat "$tmp_update" >> "$LOG_FILE"
+rm -f "$tmp_update"
+
+if [ $update_exit_code -eq 0 ]; then
+    log SUCCESS "System updated"
+else
     log WARNING "System update failed, continuing anyway..."
 fi
 
