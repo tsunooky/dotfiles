@@ -195,17 +195,31 @@ run_script() {
     
     chmod +x "$script"
     
+    # Refresh sudo timestamp to avoid prompts during execution
+    sudo -v
+    
     # Create temporary file for output
     local tmp_output=$(mktemp)
     local lines_displayed=0
     
     # Run script in background with unbuffered output
+    # Keep stdin attached for sudo prompts
     stdbuf -oL -eL bash "$script" > "$tmp_output" 2>&1 &
     local pid=$!
+    
+    # Keep sudo alive in background
+    (
+        while kill -0 $pid 2>/dev/null; do
+            sudo -v
+            sleep 30
+        done
+    ) &
+    local sudo_pid=$!
     
     # Monitor progress - show last 3 lines in a fixed area
     local last_line_count=0
     local wait_time=0
+    local sudo_refresh_count=0
     
     while kill -0 $pid 2>/dev/null; do
         local current_line_count=$(wc -l < "$tmp_output" 2>/dev/null || echo "0")
@@ -233,28 +247,57 @@ run_script() {
             
             last_line_count=$current_line_count
         else
-            # Show a spinner if no output for a while
-            wait_time=$((wait_time + 1))
-            if [ $wait_time -gt 2 ]; then
-                local spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-                local idx=$((wait_time % 10))
-                printf "\r  ${CYAN}${spinner[$idx]}${NC} Working..."
+            # Check if the script is waiting for sudo password
+            local last_line=$(tail -n 1 "$tmp_output" 2>/dev/null | tr -d '\n')
+            
+            # Don't show spinner if it's a sudo prompt
+            if [[ "$last_line" =~ \[sudo\]|password|Password ]]; then
+                # Clear any existing display
+                if [ $lines_displayed -gt 0 ]; then
+                    for ((i=0; i<lines_displayed; i++)); do
+                        printf "\033[1A\033[2K"
+                    done
+                    lines_displayed=0
+                fi
+                wait_time=0
+            else
+                # Show a spinner if no output for a while
+                wait_time=$((wait_time + 1))
+                if [ $wait_time -gt 3 ]; then
+                    # Clear previous lines
+                    if [ $lines_displayed -gt 0 ]; then
+                        for ((i=0; i<lines_displayed; i++)); do
+                            printf "\033[1A\033[2K"
+                        done
+                    fi
+                    
+                    local spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+                    local idx=$((wait_time % 10))
+                    printf "  ${CYAN}${spinner[$idx]}${NC} Working...\n"
+                    lines_displayed=1
+                fi
             fi
         fi
         
         sleep 0.5
     done
     
-    # Clear spinner if it was shown
-    if [ $wait_time -gt 2 ]; then
-        printf "\r\033[K"
+    # Clear any displayed content
+    if [ $lines_displayed -gt 0 ]; then
+        for ((i=0; i<lines_displayed; i++)); do
+            printf "\033[1A\033[2K"
+        done
     fi
     
     # Wait for process to finish
     wait $pid
     local exit_code=$?
     
-    # Clear displayed lines
+    # Stop the sudo keepalive process
+    kill $sudo_pid 2>/dev/null || true
+    wait $sudo_pid 2>/dev/null || true
+    
+    # Clear any displayed content
     if [ $lines_displayed -gt 0 ]; then
         for ((i=0; i<lines_displayed; i++)); do
             printf "\033[1A\033[2K"
