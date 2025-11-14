@@ -409,5 +409,5 @@ echo ""
 
 read -p "Reboot now? [y/N] " reboot_response < /dev/tty
 if [[ "$reboot_response" =~ ^[yY]$ ]]; then
-    sudo reboot
+    echo "reboot"
 fi
