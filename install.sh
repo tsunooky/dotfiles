@@ -84,6 +84,12 @@ cleanup_on_error() {
         rm -rf ~/yay-bin
     fi
     
+    # Clean up i3lock-color build directory
+    if [ -d /tmp/i3lock-color ]; then
+        log INFO "Cleaning up i3lock-color build directory..."
+        sudo rm -rf /tmp/i3lock-color 2>/dev/null || true
+    fi
+    
     log INFO "Logs saved in: $LOG_DIR"
     log INFO "Error log: $ERROR_LOG"
     
