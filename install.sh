@@ -176,7 +176,7 @@ install_packages() {
     fi
 }
 
-# Run installation script with live output (shows last 3 lines, unbuffered)
+# Run installation script with live output (shows last 3 lines)
 run_script() {
     local script="$1"
     local description="$2"
@@ -197,45 +197,69 @@ run_script() {
     
     # Create temporary file for output
     local tmp_output=$(mktemp)
-    local last_size=0
+    local lines_displayed=0
     
     # Run script in background with unbuffered output
     stdbuf -oL -eL bash "$script" > "$tmp_output" 2>&1 &
     local pid=$!
     
-    # Reserve space for 3 lines
-    echo ""
-    echo ""
-    echo ""
+    # Monitor progress - show last 3 lines in a fixed area
+    local last_line_count=0
+    local wait_time=0
     
-    # Monitor progress - show last 3 lines
     while kill -0 $pid 2>/dev/null; do
-        local current_size=$(stat -c%s "$tmp_output" 2>/dev/null || echo "0")
+        local current_line_count=$(wc -l < "$tmp_output" 2>/dev/null || echo "0")
         
-        # Only update if file has grown
-        if [ "$current_size" -gt "$last_size" ]; then
-            # Move cursor up 3 lines and clear them
-            printf "\033[3A"
-            printf "\033[J"
+        # Only update if new lines appeared
+        if [ "$current_line_count" -gt "$last_line_count" ]; then
+            # Reset wait time when we see activity
+            wait_time=0
             
-            # Show last 3 lines with indentation
-            tail -n 3 "$tmp_output" 2>/dev/null | while IFS= read -r line; do
-                echo "  $line"
-            done
+            # Clear previous lines if any were displayed
+            if [ $lines_displayed -gt 0 ]; then
+                for ((i=0; i<lines_displayed; i++)); do
+                    printf "\033[1A\033[2K"
+                done
+            fi
             
-            last_size=$current_size
+            # Get last 3 lines and display them
+            local output_lines=$(tail -n 3 "$tmp_output" 2>/dev/null)
+            lines_displayed=$(echo "$output_lines" | wc -l)
+            
+            # Only display if there are lines
+            if [ $lines_displayed -gt 0 ]; then
+                echo "$output_lines" | sed 's/^/  /'
+            fi
+            
+            last_line_count=$current_line_count
+        else
+            # Show a spinner if no output for a while
+            wait_time=$((wait_time + 1))
+            if [ $wait_time -gt 2 ]; then
+                local spinner=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+                local idx=$((wait_time % 10))
+                printf "\r  ${CYAN}${spinner[$idx]}${NC} Working..."
+            fi
         fi
         
-        sleep 0.3
+        sleep 0.5
     done
+    
+    # Clear spinner if it was shown
+    if [ $wait_time -gt 2 ]; then
+        printf "\r\033[K"
+    fi
     
     # Wait for process to finish
     wait $pid
     local exit_code=$?
     
-    # Move cursor up 3 lines and clear
-    printf "\033[3A"
-    printf "\033[J"
+    # Clear displayed lines
+    if [ $lines_displayed -gt 0 ]; then
+        for ((i=0; i<lines_displayed; i++)); do
+            printf "\033[1A\033[2K"
+        done
+    fi
     
     # Save to log
     cat "$tmp_output" >> "$LOG_FILE"
