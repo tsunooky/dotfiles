@@ -12,17 +12,17 @@ readonly NC='\033[0m'
 # Force input from terminal
 exec < /dev/tty
 
-echo ""
-echo "╔═══════════════════════════════════════════════════════════╗"
-echo "║                                                           ║"
-echo "║              User Preferences Configuration               ║"
-echo "║                                                           ║"
-echo "╚═══════════════════════════════════════════════════════════╝"
-echo ""
+printf "\n"
+printf "╔═══════════════════════════════════════════════════════════╗\n"
+printf "║                                                           ║\n"
+printf "║              User Preferences Configuration               ║\n"
+printf "║                                                           ║\n"
+printf "╚═══════════════════════════════════════════════════════════╝\n"
+printf "\n"
 
 # Set 4K configuration
 set_4k() {
-    echo -e "${BLUE}[INFO]${NC} Configuring for 4K display..."
+    printf "${BLUE}[INFO]${NC} Configuring for 4K display...\n"
     
     # Set DPI for polybar
     if [ -f ~/.config/polybar/config.ini ]; then
@@ -40,14 +40,14 @@ Xft.antialias: 1
 Xft.rgba: rgb
 EOF
     
-    echo -e "${GREEN}[✓]${NC} 4K configuration applied (DPI: 192)"
+    printf "${GREEN}[✓]${NC} 4K configuration applied (DPI: 192)\n"
 }
 
 # Set custom DPI
 set_custom_dpi() {
     local dpi="$1"
     
-    echo -e "${BLUE}[INFO]${NC} Configuring custom DPI: $dpi..."
+    printf "${BLUE}[INFO]${NC} Configuring custom DPI: $dpi...\n"
     
     # Set DPI for polybar
     if [ -f ~/.config/polybar/config.ini ]; then
@@ -65,7 +65,7 @@ Xft.antialias: 1
 Xft.rgba: rgb
 EOF
     
-    echo -e "${GREEN}[✓]${NC} Custom DPI configuration applied: $dpi"
+    printf "${GREEN}[✓]${NC} Custom DPI configuration applied: $dpi\n"
 }
 
 # Validate DPI input
@@ -80,9 +80,9 @@ is_valid_dpi() {
 }
 
 # Main configuration
-echo -e "${CYAN}Display Configuration${NC}"
-echo "──────────────────────────────────────────────────────────"
-echo ""
+printf "${CYAN}Display Configuration${NC}\n"
+printf "──────────────────────────────────────────────────────────\n"
+printf "\n"
 
 # Ask about 4K monitor
 while true; do
@@ -98,13 +98,13 @@ while true; do
         set_4k
         break
     elif [[ "$response_4k" == "n" ]] || [[ "$response_4k" == "no" ]]; then
-        echo ""
-        echo "Common DPI values:"
-        echo "  - 96   (Standard 1080p)"
-        echo "  - 120  (1.25x scaling)"
-        echo "  - 144  (1.5x scaling - 2K)"
-        echo "  - 192  (2x scaling - 4K)"
-        echo ""
+        printf "\n"
+        printf "Common DPI values:\n"
+        printf "  - 96   (Standard 1080p)\n"
+        printf "  - 120  (1.25x scaling)\n"
+        printf "  - 144  (1.5x scaling - 2K)\n"
+        printf "  - 192  (2x scaling - 4K)\n"
+        printf "\n"
         
         while true; do
             read -p "Enter your desired DPI (72-300) [default: 96]: " response_dpi
@@ -116,20 +116,20 @@ while true; do
                 set_custom_dpi "$response_dpi"
                 break 2
             else
-                echo -e "${RED}[✗]${NC} Invalid DPI. Please enter a number between 72 and 300."
+                printf "${RED}[✗]${NC} Invalid DPI. Please enter a number between 72 and 300.\n"
             fi
         done
     else
-        echo "Please answer 'y' for yes or 'n' for no."
+        printf "Please answer 'y' for yes or 'n' for no.\n"
     fi
 done
 
-echo ""
-echo "──────────────────────────────────────────────────────────"
-echo ""
+printf "\n"
+printf "──────────────────────────────────────────────────────────\n"
+printf "\n"
 
 # Additional configurations can be added here
 # For example: keyboard layout, timezone, etc.
 
-echo -e "${GREEN}[✓]${NC} User preferences configured successfully!"
-echo ""
+printf "${GREEN}[✓]${NC} User preferences configured successfully!\n"
+printf "\n"
