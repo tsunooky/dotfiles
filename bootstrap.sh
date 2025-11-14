@@ -13,10 +13,10 @@ clear
 cat << "EOF"
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║        Arch Linux Configuration Installer                ║
+║        Arch Linux Configuration Installer                 ║
 ║                                                           ║
-║  This will install a complete system with i3wm,          ║
-║  polybar, neovim and all necessary tools.                ║
+║  This will install a complete system with i3wm,           ║
+║  polybar, neovim and all necessary tools.                 ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
 EOF

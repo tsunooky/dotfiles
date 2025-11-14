@@ -113,22 +113,26 @@ is_installed() {
     pacman -Qi "$1" &>/dev/null
 }
 
-# Install single package with retry
+# Install single package with retry and live output
 install_package() {
     local package="$1"
     local max_retries=3
     local retry=0
     
     if is_installed "$package"; then
-        log INFO "$package is already installed"
+        log SUCCESS "$package (already installed)"
         return 0
     fi
     
-    log INFO "Installing $package..."
+    # Use a spinner/progress line that gets overwritten
+    printf "\r${BLUE}[INFO]${NC} Installing $package...                    "
     
     while [ $retry -lt $max_retries ]; do
-        if sudo pacman -S --noconfirm --needed "$package" >> "$LOG_FILE" 2>> "$ERROR_LOG"; then
-            log SUCCESS "$package installed"
+        # Show live pacman output with progress, download speed, etc.
+        if sudo pacman -S --noconfirm --needed "$package" 2>&1 | tee -a "$LOG_FILE"; then
+            # Clear the line and show success
+            printf "\r\033[K"
+            log SUCCESS "$package"
             return 0
         else
             retry=$((retry + 1))
@@ -172,7 +176,7 @@ install_packages() {
     fi
 }
 
-# Run installation script with detailed logging
+# Run installation script with live output (shows last 3 lines)
 run_script() {
     local script="$1"
     local description="$2"
@@ -188,17 +192,42 @@ run_script() {
     fi
     
     log STEP "$description"
-    log INFO "Running: $script"
     
     chmod +x "$script"
     
-    # Run with visible output for important scripts
-    if bash "$script" 2>&1 | tee -a "$LOG_FILE"; then
+    # Create temporary file for output
+    local tmp_output=$(mktemp)
+    
+    # Run script in background
+    bash "$script" > "$tmp_output" 2>&1 &
+    local pid=$!
+    
+    # Monitor progress - show last 3 lines
+    echo ""
+    while kill -0 $pid 2>/dev/null; do
+        clear_lines="\033[2K\r\033[1A\033[2K\r\033[1A\033[2K\r"
+        printf "$clear_lines"
+        tail -n 3 "$tmp_output" 2>/dev/null | sed 's/^/  /'
+        sleep 0.5
+    done
+    
+    # Wait for process to finish
+    wait $pid
+    local exit_code=$?
+    
+    # Clear the 3 lines
+    printf "\033[2K\r\033[1A\033[2K\r\033[1A\033[2K\r"
+    
+    # Save to log
+    cat "$tmp_output" >> "$LOG_FILE"
+    rm -f "$tmp_output"
+    
+    if [ $exit_code -eq 0 ]; then
         log SUCCESS "$description completed"
         return 0
     else
-        log ERROR "Failed: $description"
-        log ERROR "Check $ERROR_LOG for details"
+        log ERROR "Failed: $description (exit code: $exit_code)"
+        log ERROR "Check $LOG_FILE for details"
         
         if [ "$optional" = "true" ]; then
             log WARNING "Optional script failed, continuing..."
@@ -435,15 +464,6 @@ log STEP "Final configuration"
 export GTK_THEME="Adwaita:dark"
 fc-cache -f
 
-# Set default wallpaper
-if [ -f ~/.wallpapers/default.jpg ]; then
-    mkdir -p ~/.config/scripts
-    if [ -f ~/.config/scripts/change_wallpaper.sh ]; then
-        chmod +x ~/.config/scripts/change_wallpaper.sh
-        ~/.config/scripts/change_wallpaper.sh ~/.wallpapers/default.jpg || true
-    fi
-fi
-
 # Set executable permissions for scripts
 find ~/.config/scripts -type f -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
 
@@ -487,5 +507,5 @@ echo ""
 
 read -p "Reboot now? [y/N] " reboot_response < /dev/tty
 if [[ "$reboot_response" =~ ^[yY]$ ]]; then
-    echo "reboot"
+    sudo reboot
 fi
