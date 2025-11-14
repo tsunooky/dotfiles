@@ -55,12 +55,16 @@ fastfetch
 imagemagick
 sed
 grep
+ripgrep
 awk
 xsel
 curl
 tar
 unzip
 unrar
+gzip
+7zip
+bash-completion
 
 ttf-jetbrains-mono-nerd
 noto-fonts
@@ -87,3 +91,5 @@ valgrind
 
 firefox
 flameshot
+ncdu
+bat
