@@ -195,26 +195,13 @@ run_script() {
     
     chmod +x "$script"
     
-    # Refresh sudo timestamp to avoid prompts during execution
-    sudo -v
-    
     # Create temporary file for output
     local tmp_output=$(mktemp)
     local lines_displayed=0
     
     # Run script in background with unbuffered output
-    # Keep stdin attached for sudo prompts
     stdbuf -oL -eL bash "$script" > "$tmp_output" 2>&1 &
     local pid=$!
-    
-    # Keep sudo alive in background
-    (
-        while kill -0 $pid 2>/dev/null; do
-            sudo -v
-            sleep 30
-        done
-    ) &
-    local sudo_pid=$!
     
     # Monitor progress - show last 3 lines in a fixed area
     local last_line_count=0
@@ -293,10 +280,6 @@ run_script() {
     wait $pid
     local exit_code=$?
     
-    # Stop the sudo keepalive process
-    kill $sudo_pid 2>/dev/null || true
-    wait $sudo_pid 2>/dev/null || true
-    
     # Clear any displayed content
     if [ $lines_displayed -gt 0 ]; then
         for ((i=0; i<lines_displayed; i++)); do
@@ -373,9 +356,17 @@ fi
 
 log SUCCESS "Configuration files ready"
 
+# Request sudo access once at the beginning
+log STEP "Requesting sudo access"
+if ! sudo -v; then
+    log ERROR "Failed to obtain sudo access"
+    exit 1
+fi
+log SUCCESS "Sudo access granted"
+
 # Update system
 log STEP "Updating system"
-if ! sudo pacman -Syu --noconfirm >> "$LOG_FILE" 2>> "$ERROR_LOG"; then
+if ! sudo pacman -Syu --noconfirm 2>&1 | tee -a "$LOG_FILE"; then
     log WARNING "System update failed, continuing anyway..."
 fi
 
