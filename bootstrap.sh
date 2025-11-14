@@ -54,6 +54,9 @@ fi
 # Navigate to directory and run installation
 cd "$INSTALL_DIR"
 
+#JUST FOR TEST 
+git checkout dev-setup # REMOVE ON MAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # Make scripts executable
 chmod +x install.sh
 chmod +x install/*.sh 2>/dev/null || true
