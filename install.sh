@@ -382,11 +382,10 @@ run_script "./install/pacman.sh" "Pacman configuration"
 
 # System packages
 install_packages "System Core" \
-    linux linux-firmware grub efibootmgr \
     base-devel glibc gcc make git git-lfs
 
 install_packages "System Utilities" \
-    man-pages man-db nano vim openssh \
+    man-pages man-db nano vim \
     fuse3 os-prober ntfs-3g curl wget \
     sed grep awk ripgrep tar unzip unrar gzip p7zip bash-completion
 
@@ -397,7 +396,7 @@ install_packages "Xorg Display Server" \
 # Audio
 install_packages "Audio System" \
     pipewire pipewire-alsa pipewire-pulse \
-    wireplumber pavucontrol alsa-utils
+    wireplumber pavucontrol
 
 # Network
 install_packages "Network Tools" \
@@ -409,21 +408,21 @@ install_packages "i3 Window Manager" \
     i3-wm xss-lock picom autotiling polybar rofi
 
 install_packages "Desktop Tools" \
-    brightnessctl dunst libnotify feh scrot \
+    brightnessctl dunst libnotify feh \
     thunar thunar-volman gvfs gvfs-mtp \
-    lxappearance acpi flameshot
+    acpi flameshot
 
 # Themes and fonts
 install_packages "Themes and Fonts" \
-    fontconfig gtk3 gtk4 adw-gtk-theme \
+    fontconfig adw-gtk-theme \
     papirus-icon-theme lsd starship \
     ttf-jetbrains-mono-nerd noto-fonts \
-    noto-fonts-extra noto-fonts-emoji noto-fonts-cjk
+    noto-fonts-emoji
 
 # Applications
 install_packages "Applications" \
     alacritty firefox vim \
-    python imagemagick xsel fastfetch ncdu bat yazi zathura
+    python imagemagick xsel fastfetch ncdu bat
 
 # Ask about Neovim
 echo ""
