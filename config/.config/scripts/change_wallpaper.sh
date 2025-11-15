@@ -11,6 +11,3 @@ fi
 
 matugen image "$1"
 feh --bg-fill "$1"
-echo "#!/bin/sh
-~/.config/scripts/change_wallpapers.sh $1" > ~/.bg
-chmod +x ~/.bg
