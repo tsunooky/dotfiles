@@ -480,6 +480,7 @@ sed -i '/exec.*autostart_once\.sh/d' ~/.config/i3/config
 # Remove this script
 rm -f ~/.config/i3/autostart_once.sh
 i3 restart
+pywalfox update
 EOF
     
     chmod +x ~/.config/i3/autostart_once.sh
@@ -524,8 +525,8 @@ main() {
     update_system || exit 1
     initial_setup || exit 1
     install_packages_from_file || exit 1
-    run_install_scripts || exit 1
     copy_config_files || exit 1
+    run_install_scripts || exit 1
     enable_services || exit 1
     finalize_setup || exit 1
     
