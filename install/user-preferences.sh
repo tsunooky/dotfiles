@@ -25,7 +25,7 @@ setDPI() {
     local dpi="$1"
     
     if [ -f ~/.config/polybar/config.ini ]; then
-        sed -i "s/{{DPI}}/${dpi}/g" ~/.config/polybar/config.ini
+        sed -i "s/{{DPI}}/${dpi}/g" /tmp/dotfiles-install/config/.config/polybar/config.ini
     else
         log_error "Polybar config not found at ~/.config/polybar/config.ini"
         return 1
