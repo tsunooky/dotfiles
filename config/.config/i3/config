@@ -125,7 +125,8 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
 # Take a screenshot
-bindsym $mod+Shift+S exec flameshot gui
+bindsym $mod+shift+s exec flameshot gui
+bindsym Print exec flameshot gui
 
 # Switch to next workspace
 bindsym $mod+Tab workspace next
