@@ -139,6 +139,7 @@ alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
 alias intra="firefox https://intra.forge.epita.fr/"
 alias moodle="firefox https://moodle.epita.fr/my/"
 alias forge="firefox https://cri.epita.fr/"
+alias cf="clang-format -i"
 
 # Config alias
 alias conf="~/.config/scripts/edit_config.sh"

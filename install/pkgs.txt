@@ -25,6 +25,7 @@ unrar
 gzip
 p7zip
 bash-completion
+clang
 
 # Xorg Display Server
 xorg-server
