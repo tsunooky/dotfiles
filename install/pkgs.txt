@@ -1,84 +1,27 @@
-git
-git-lfs
-fuse3
-os-prober
-ntfs-3g
-xorg-server
-xorg-xinit
-xorg-xrandr
-man-pages
-man-db
-nano
-vim
-neovim
-alacritty
-ly
+base-devel glibc gcc make git git-lfs
 
-acpi
-pipewire
-pipewire-alsa
-pipewire-pulse
-wireplumber
-blueman
-pavucontrol
+man-pages man-db nano vim
+fuse3 os-prober ntfs-3g curl
+sed grep awk ripgrep tar unzip unrar gzip p7zip bash-completion
 
-iw
-dialog
-wpa_supplicant
-networkmanager
-network-manager-applet
+xorg-server xorg-xinit xorg-xrandr
 
-brightnessctl
-dunst
-libnotify
-feh
+pipewire pipewire-alsa pipewire-pulse
+wireplumber pavucontrol alsa-utils sof-firmware
 
-fontconfig
-adw-gtk-theme
-thunar-volman
-gvfs
-gvfs-mtp
-lsd
-papirus-icon-theme
+networkmanager network-manager-applet
+wpa_supplicant iw dialog blueman
 
-python
-fastfetch
-imagemagick
-sed
-grep
-ripgrep
-awk
-xsel
-curl
-tar
-unzip
-unrar
-gzip
-7zip
-bash-completion
+i3-wm xss-lock picom autotiling polybar rofi
 
-ttf-jetbrains-mono-nerd
-noto-fonts
+brightnessctl dunst libnotify feh
+thunar thunar-volman gvfs gvfs-mtp
+acpi flameshot
+
+fontconfig adw-gtk-theme
+papirus-icon-theme lsd starship
+ttf-jetbrains-mono-nerd noto-fonts
 noto-fonts-emoji
 
-i3-wm
-xss-lock
-picom
-autotiling
-polybar
-rofi
-starship
-
-base-devel
-glibc
-gcc
-gdb
-make
-clang
-criterion
-valgrind
-
-firefox
-flameshot
-ncdu
-bat
+alacritty firefox vim
+python imagemagick xsel fastfetch ncdu bat

@@ -1,7 +1,14 @@
-During the arch install:
-pacman -S archlinux-keyring
-archinstall
-Faire un guide
+Faire un guide d'installation Arch
+
+README
+
+
+
+
+How to start on Arch?
+
+changer la resolution :
+xrandr --output eDP-1 --mode 3072x1920 --rate 120
 
 Install a package:
 sudo pacman -S <package>
@@ -12,21 +19,15 @@ sudo pacman -Syu
 Proberly remove a package on Arch:
 sudo pacman -Rcns <package>
 
-Maybe :
-neovim tree-sitter-cli lazygit
-BUT NV Chad is probably better
+
+- Put vim shortcuts in NV Chad
+
 
 Modify alacritty matugen colors
-
-Changer cursor ??
 
 Rofi + powermenu
 
 Keybinds helper (maybe rofi) : i3, vim, bashrc commands etc...
-
-README
-
-trier wallpapers, en mettre un par defaut avec bg
 
 git config --global user.name "your_username"
 git config --global user.email "github@mail.com"
@@ -39,14 +40,5 @@ ssh -T git@github.com
 On each repo for github to push with ssh keys:
 git remote set-url origin git@github.com:your-repository.git
 
-seulement si 4k :
-cat ~/.Xressources
-Xft.dpi: 192
-Xft.autohint: 0
-Xft.lcdfilter: lcddefault
-Xft.hintstyle: hintfull
-Xft.hinting: 1
-Xft.antialias: 1
-Xft.rgba: rgb
-
 Regler problemes de compatibilites avec ecrans 4k : Xressources, polybar, rofi
+

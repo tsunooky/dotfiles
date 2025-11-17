@@ -7,8 +7,10 @@ for_window [class="pavucontrol"] floating enable
 
 # ---------- Launch programs at startup ----------
 
+# Load DPI settings
+exec_always --no-startup-id xrdb -merge ~/.Xresources
+
 # Change resolution depending on user screen
-#exec --no-startup-id xrandr --output eDP-1 --mode 3072x1920 --rate 120
 exec_always --no-startup-id ~/.config/scripts/screenres.sh
 
 # Launch autotiling to have a better automatic window tiling
