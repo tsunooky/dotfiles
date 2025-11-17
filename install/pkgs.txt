@@ -1,27 +1,89 @@
-base-devel glibc gcc make git git-lfs
+# Base Development Tools
+base-devel
+glibc
+gcc
+make
+git
+git-lfs
 
-man-pages man-db nano vim
-fuse3 os-prober ntfs-3g curl
-sed grep awk ripgrep tar unzip unrar gzip p7zip bash-completion
+# System Tools & Utilities
+man-pages
+man-db
+nano
+vim
+fuse3
+os-prober
+ntfs-3g
+curl
+sed
+grep
+awk
+ripgrep
+tar
+unzip
+unrar
+gzip
+p7zip
+bash-completion
 
-xorg-server xorg-xinit xorg-xrandr
+# Xorg Display Server
+xorg-server
+xorg-xinit
+xorg-xrandr
 
-pipewire pipewire-alsa pipewire-pulse
-wireplumber pavucontrol alsa-utils sof-firmware
+# Audio System (Pipewire)
+pipewire
+pipewire-alsa
+pipewire-pulse
+wireplumber
+pavucontrol
+alsa-utils
+sof-firmware
 
-networkmanager network-manager-applet
-wpa_supplicant iw dialog blueman
+# Network Management
+networkmanager
+network-manager-applet
+wpa_supplicant
+iw
+dialog
+blueman
 
-i3-wm xss-lock picom autotiling polybar rofi
+# i3 Window Manager & Compositor
+i3-wm
+xss-lock
+picom
+autotiling
+polybar
+rofi
 
-brightnessctl dunst libnotify feh
-thunar thunar-volman gvfs gvfs-mtp
-acpi flameshot
+# Desktop Utilities
+brightnessctl
+dunst
+libnotify
+feh
+thunar
+thunar-volman
+gvfs
+gvfs-mtp
+acpi
+flameshot
 
-fontconfig adw-gtk-theme
-papirus-icon-theme lsd starship
-ttf-jetbrains-mono-nerd noto-fonts
+# Fonts & Themes
+fontconfig
+adw-gtk-theme
+papirus-icon-theme
+lsd
+starship
+ttf-jetbrains-mono-nerd
+noto-fonts
 noto-fonts-emoji
 
-alacritty firefox vim
-python imagemagick xsel fastfetch ncdu bat
+# Applications
+alacritty
+firefox
+python
+imagemagick
+xsel
+fastfetch
+ncdu
+bat
