@@ -26,6 +26,7 @@ gzip
 p7zip
 bash-completion
 clang
+gdb
 
 # Xorg Display Server
 xorg-server
