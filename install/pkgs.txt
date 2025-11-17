@@ -83,6 +83,7 @@ noto-fonts-emoji
 # Applications
 alacritty
 firefox
+discord
 python
 imagemagick
 xsel
