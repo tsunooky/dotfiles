@@ -20,7 +20,7 @@ TEMP_INSTALLED_PKGS="/tmp/dotfiles-installed-pkgs.txt"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+BLUE='\033[0;36m'
 CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
 BOLD='\033[1m'
@@ -337,20 +337,18 @@ run_install_scripts() {
         fi
     fi
     
-    # Add vim script if user wants vim (or doesn't want nvim)
-    if [[ "${INSTALL_NVIM}" == "no" ]] || [[ "${INSTALL_NVCHAD}" == "no" ]]; then
-        local vim_script="${SCRIPT_DIR}/install/vim-install.sh"
-        if [ -f "${vim_script}" ]; then
-            log_info "Installing Vim with plugins..."
-            if bash "${vim_script}" >> "${LOGFILE}" 2>&1; then
-                log_success "Vim installed successfully"
-            else
-                log_error "Failed to install Vim (check logs)"
-                return 1
-            fi
+    # Add vim
+    local vim_script="${SCRIPT_DIR}/install/vim-install.sh"
+    if [ -f "${vim_script}" ]; then
+        log_info "Installing Vim with plugins..."
+        if bash "${vim_script}" >> "${LOGFILE}" 2>&1; then
+            log_success "Vim installed successfully"
+        else
+            log_error "Failed to install Vim (check logs)"
+            return 1
         fi
     fi
-    
+
     # Add laptop script if user has a laptop
     if [[ "${INSTALL_LAPTOP}" == "yes" ]]; then
         local laptop_script="${SCRIPT_DIR}/install/laptop.sh"
@@ -472,8 +470,8 @@ EOF
 #!/bin/bash
 # This script runs once and removes itself completely
 
-if [ -f ~/.wallpapers/default.jpg ] && [ -x ~/.config/scripts/change_wallpapers.sh ]; then
-    ~/.config/scripts/change_wallpapers.sh ~/.wallpapers/default.jpg
+if [ -f ~/.wallpapers/default.jpg ] && [ -x ~/.config/scripts/change_wallpaper.sh ]; then
+    ~/.config/scripts/change_wallpaper.sh ~/.wallpapers/default.jpg
 fi
 
 # Remove the exec line from i3 config
@@ -486,7 +484,7 @@ EOF
     chmod +x ~/.config/i3/autostart_once.sh
     
     # Add exec to i3 config (will be removed by the script itself)
-    echo "exec --no-startup-id ~/.config/i3/autostart_once.sh" >> ~/.config/i3/config
+    echo "exec_always --no-startup-id ~/.config/i3/autostart_once.sh" >> ~/.config/i3/config
     
     log_success "First-run setup configured (will auto-remove after first i3 startup)"
 }

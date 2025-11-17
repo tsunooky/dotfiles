@@ -49,6 +49,7 @@ dialog
 blueman
 
 # i3 Window Manager & Compositor
+ly
 i3-wm
 xss-lock
 picom
