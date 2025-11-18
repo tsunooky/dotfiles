@@ -146,7 +146,7 @@ alias conf="~/.config/scripts/edit_config.sh"
 
 export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
 
-export PATH=$PATH:/home/adrien/.local/bin/
+export PATH=$PATH:~/.local/bin/
 export PATH=$PATH:~/.cargo/bin/
 
 eval "$(starship init bash)"
