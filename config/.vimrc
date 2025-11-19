@@ -109,7 +109,6 @@ endfunction
 :inoremap @pf printf("\n");<Left><Left><Left><Left><Left>
 :inoremap @struct struct <CR>{<CR>};<Up><Up><Right><Right><Right><Right><Right>
 :inoremap @dbp #include <stdio.h><CR>int main(void)<CR><BS>{<CR>printf("%\n",);<CR>}<Up><Right><C-Right><Right><Right><Right>
-:inoremap --- ->
 
 :inoremap <C-t> <Esc>:NERDTreeToggle<CR>i
 :nnoremap <C-t> :NERDTreeToggle<CR>
