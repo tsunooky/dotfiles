@@ -55,7 +55,7 @@ floating_modifier $mod
 bindsym $mod+Shift+w exec --no-startup-id ~/.config/scripts/random_wallpaper.sh
 
 # i3lock with blur
-bindsym $mod+i exec --no-startup-id ~/.config/scripts/lock.sh
+bindsym $mod+i exec --no-startup-id sh ~/.config/scripts/lock.sh
 
 # Start a terminal
 bindsym $mod+Return exec --no-startup-id alacritty
