@@ -148,6 +148,7 @@ bgadd() {
 # Custom aliases
 alias clip='copy'
 alias clipfiles='copyfiles'
+alias repo='cdg'
 alias update='sudo pacman -Syu'
 alias ff='fastfetch'
 alias clsw="rm -r ~/.cache/vim/swap"
