@@ -1,39 +1,102 @@
 # If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+[[ $- != *i* ]] && return
+
+# ----------------------------
+# ENVIRONMENT VARIABLES & PATH
+# ----------------------------
+
+export PATH=$PATH:~/.local/bin/
+export PATH=$PATH:~/.cargo/bin/
 
 # TAB colors
 if [ -x /usr/bin/dircolors ]; then
     eval "$(dircolors -b)"
 fi
-alias ls='ls --color=auto'
 
-# Bash tab completion
-if [ -f /usr/share/bash-completion/bash_completion ]; then
-  . /usr/share/bash-completion/bash_completion
-elif [ -f /etc/bash_completion ]; then
-  . /etc/bash_completion
-fi
+# Use bat for colored man pages
+export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
 
-# Command history settings
+# -----------------------
+# HISTORY & SHELL OPTIONS
+# -----------------------
+
 HISTCONTROL=ignoreboth
 HISTSIZE=1000
 HISTFILESIZE=2000
 HISTIGNORE="&:[bf]g:exit:ls:lsd:ll:la:sl:clear:history"
 shopt -s histappend
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-if [ -x /usr/bin/dircolors ]; then
-    eval "$(dircolors -b)"
-fi
+# ------------------------------
+# GENERAL ALIASES & REPLACEMENTS
+# ------------------------------
 
-# Extract function
-extract () {
+# Colorize standard commands
+alias diff='diff --color=auto'
+alias grep='grep --color=auto'
+alias ip='ip -color=auto'
+alias cat='bat -pp'
+alias cqt='bat -pp'
+alias l='lsd'
+alias ls='lsd'
+alias sl='lsd'
+alias la='lsd -A'
+alias ll='lsd -l'
+alias tree='lsd --tree'
+
+# -----------
+# GIT ALIASES
+# -----------
+
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gpu='git pull'
+alias gl='git log --oneline --graph --decorate'
+alias gt='git tag -ma'
+alias gpt='git push --follow-tags'
+alias gd='git diff --name-only --relative --diff-filter=d -z | xargs -0 bat --diff'
+
+# Go to the root of current git repository
+cdg() {
+    local root_dir
+    root_dir=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [[ -n "$root_dir" ]]; then
+        cd "$root_dir"
+    else
+        echo "Error : You are not in a Git repository." >&2
+        return 1
+    fi
+}
+
+# ---------------------
+# EPITA & C PROGRAMMING
+# ---------------------
+
+# C Dev shortcuts
+alias makec="make && make check && make clean"
+alias gcw="gcc -std=c99 -pedantic -Werror -Wall -Wextra -Wvla"
+alias cf="clang-format -i"
+
+# Quick extraction from Downloads directory
+alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
+alias zippls='mv ~/Downloads/*.zip . && unzip *.zip && rm *.zip'
+
+# -----------------
+# UTILITY FUNCTIONS
+# -----------------
+
+# Spawns a new terminal in the current directory
+alias double='alacritty --working-directory "$PWD" > /dev/null 2>&1 & disown'
+
+# Create a directory and enter it
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Smart archive extractor
+extract() {
   if [ -f $1 ] ; then
     case $1 in
           *.tar.bz2)     tar xvjf $1    ;;
@@ -46,107 +109,52 @@ extract () {
           *.zip)         unzip $1       ;;
           *.Z)           uncompress $1  ;;
           *.7z)          7z x $1        ;;
-          *)             echo "Don't know how to extract '%1'..."
+          *)             echo "Don't know how to extract '$1'..."
       esac
     else
       echo "'$1' is not a valid file!"
     fi
 }
 
-# Creates a folder and goes into it
-mkcd() {
-  mkdir -p "$1" && cd "$1"
+# Clipboard utilities
+copy() {
+    cat "$@" | xsel -b
 }
 
-# Grep search in the history
-hgrep() {
-  history | rg --color=auto "$@"
-}
-
-#Copy functions
-clip() {
-    cat $@ | xsel -b
-}
-
-clipfiles() {
+copyfiles() {
     (
-        for file in $@; do
-            if [ -f $file ]; then
-                echo $file
-                cat $file
+        for file in "$@"; do
+            if [ -f "$file" ]; then
+                echo "$file"
+                cat "$file"
                 echo
             fi
         done
     ) | xsel -b
 }
 
-# Goes at the root of the current Git repository
-repo() {
-    local root_dir
-    root_dir=$(git rev-parse --show-toplevel 2>/dev/null)
+# ------
+# CONFIG
+# ------
 
-    if [[ -n "$root_dir" ]]; then
-        cd "$root_dir"
-    else
-        echo "Error : You are not in a Git repository." >&2
-        return 1
-    fi
-}
-
-batdiff() {
-    git diff --name-only --relative --diff-filter=d -z | xargs -0 bat --diff
-}
-
-alias bathelp='bat --plain --language=help -pp'
-help() {
-    "$@" --help 2>&1 | bathelp
-}
-
-# Color aliases
-alias cat='bat -pp'
-alias diff='diff --color=auto'
-alias grep='grep --color=auto'
-alias ip='ip -color=auto'
-
-# LSD aliases
-alias ls='lsd'
-alias sl='lsd'
-alias la='lsd -A'
-alias ll='lsd -l'
-alias tree='lsd --tree'
-
-# Git aliases
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit -m'
-alias gp='git push'
-alias gl='git log --oneline --graph --decorate'
-alias gd='batdiff'
-alias gt='git tag -ma'
-alias gpt='git push --follow-tags'
-
-# Custom aliases
-alias update='sudo pacman -Syu'
-alias ff='fastfetch'
+# Wallpaper & Matugen scripts
 alias bg='~/.config/scripts/change_wallpaper.sh'
 alias rbg='(~/.config/scripts/random_wallpaper.sh &)'
+alias bgdir='cd .wallpapers'
+bgadd() {
+    cp "$1" ~/.wallpapers
+}
+
+# Custom aliases
+alias clip='copy'
+alias clipfiles='copyfiles'
+alias update='sudo pacman -Syu'
+alias ff='fastfetch'
 alias clsw="rm -r ~/.cache/vim/swap"
-alias makec="make && make check && make clean"
-
-
-# Epita alias
-alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
-alias intra="firefox https://intra.forge.epita.fr/"
-alias moodle="firefox https://moodle.epita.fr/my/"
-alias forge="firefox https://cri.epita.fr/"
-alias cf="clang-format -i"
 
 # Config alias
 alias conf="~/.config/scripts/edit_config.sh"
 
-export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
-
-export PATH=$PATH:~/.local/bin/
-export PATH=$PATH:~/.cargo/bin/
-
+# ----- Prompt init with starship -----
 eval "$(starship init bash)"
+
