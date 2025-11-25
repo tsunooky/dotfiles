@@ -140,7 +140,6 @@ bindsym Ctrl+b exec "blueman-manager"
 # Launch Firefox
 bindsym $mod+Shift+F exec "firefox"
 
-
 # ---------- Hardware and media controls ----------
 
 # Pulse Audio controls
@@ -160,4 +159,3 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec ~/.config/scripts/brightness.sh up
 bindsym XF86MonBrightnessDown exec ~/.config/scripts/brightness.sh down
-
