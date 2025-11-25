@@ -492,7 +492,7 @@ sed -i '/exec.*autostart_once\.sh/d' ~/.config/i3/config
 
 # Remove this script
 rm -f ~/.config/i3/autostart_once.sh
-i3 restart
+i3-msg restart
 pywalfox update
 EOF
     
