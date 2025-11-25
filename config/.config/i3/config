@@ -121,6 +121,9 @@ bindsym $mod+Shift+8 move container to workspace number "8"
 bindsym $mod+Shift+9 move container to workspace number "9"
 bindsym $mod+Shift+0 move container to workspace number "10"
 
+# Switch between two last opened workspaces
+bindsym $mod+Tab workspace back_and_forth
+
 # Reload the configuration file
 bindsym $mod+Shift+c reload
 
@@ -130,9 +133,6 @@ bindsym $mod+Shift+r restart
 # Take a screenshot
 bindsym $mod+shift+s exec flameshot gui
 bindsym Print exec flameshot gui
-
-# Switch to next workspace
-bindsym $mod+Tab workspace next
 
 # Launch the bluetooth manager
 bindsym Ctrl+b exec "blueman-manager"
