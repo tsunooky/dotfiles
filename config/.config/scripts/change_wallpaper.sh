@@ -2,11 +2,11 @@
 
 if [ -z "$1" ]; then
   echo "Usage: bg <path_to_wallpaper>"
-  return 1
+  exit 1
 fi
 if [ ! -f "$1" ]; then
   echo "Error: File not found: $1."
-  return 1
+  exit 1
 fi
 
 i3 workspace 11 > /dev/null
