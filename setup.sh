@@ -369,6 +369,19 @@ run_install_scripts() {
     else
         log_warning "yay not found, skipping matugen-bin installation"
     fi
+
+    # Install Zsh
+    local zsh_script="${SCRIPT_DIR}/install/zsh-install.sh"
+    if [ -f "${zsh_script}" ]; then
+        log_info "Configuring Zsh..."
+        if bash "${zsh_script}" >> "${LOGFILE}" 2>&1; then
+            log_success "Zsh configured successfully"
+        else
+            log_error "Failed to configure Zsh (check logs)"
+            return 1
+        fi
+    fi
+
 }
 
 # ============================================================================
