@@ -9,5 +9,9 @@ if [ ! -f "$1" ]; then
   return 1
 fi
 
+i3 workspace 11 > /dev/null
+sleep 0.2
 matugen image "$1"
 feh --bg-fill "$1"
+sleep 0.6
+i3 workspace back_and_forth > /dev/null

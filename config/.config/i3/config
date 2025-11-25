@@ -52,7 +52,10 @@ font pango:JetBrains Mono 11
 floating_modifier $mod
 
 # Changes the wallpaper to a random one inside the ~/.wallpapers folder
-bindsym $mod+Shift+w exec --no-startup-id ~/.config/scripts/random_wallpaper.sh
+bindsym $mod+Shift+b exec --no-startup-id ~/.config/scripts/random_wallpaper.sh
+
+# Opens rofi wallpaper chooser
+bindsym $mod+Shift+w exec --no-startup-id ~/.config/scripts/bg_chooser.sh
 
 # i3lock with blur
 bindsym $mod+i exec --no-startup-id sh ~/.config/scripts/lock.sh
