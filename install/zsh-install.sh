@@ -1,4 +1,4 @@
 #!/bin/sh
 
-chsh -s /ust/bin/zsh
+chsh -s /usr/bin/zsh
 
