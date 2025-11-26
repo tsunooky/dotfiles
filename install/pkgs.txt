@@ -89,6 +89,7 @@ python
 imagemagick
 xsel
 fastfetch
+btop
 ncdu
 bat
 zsh
