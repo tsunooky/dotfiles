@@ -135,7 +135,7 @@ bindsym $mod+shift+s exec flameshot gui
 bindsym Print exec flameshot gui
 
 # Launch the bluetooth manager
-bindsym Ctrl+b exec "blueman-manager"
+bindsym $mod+b exec "blueman-manager"
 
 # Launch Firefox
 bindsym $mod+Shift+F exec "firefox"
