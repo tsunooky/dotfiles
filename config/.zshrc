@@ -160,7 +160,15 @@ copy() {
 }
 
 copyname() {
-    cat ${@:-.}/**/*(.) | xsel -b
+    (
+        for file in "$@"; do
+            if [ -f "$file" ]; then
+                echo "$file"
+                cat "$file"
+                echo
+            fi
+        done
+    ) | xsel -b
 }
 
 # ------
