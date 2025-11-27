@@ -98,21 +98,17 @@ cdg() {
 # EPITA & C PROGRAMMING
 # ---------------------
 
+# Spawns a new terminal in the current directory
+alias double='alacritty --working-directory "$PWD" > /dev/null 2>&1 & disown'
+
 # C Dev shortcuts
 alias makec="make && make check && make clean"
 alias gcw="gcc -std=c99 -pedantic -Werror -Wall -Wextra -Wvla"
 alias cf="clang-format -i"
 
-# Quick extraction from Downloads directory
-alias tarpls='mv ~/Downloads/*.tar . && tar -xvf *.tar && rm *.tar'
-alias zippls='mv ~/Downloads/*.zip . && unzip *.zip && rm *.zip'
-
 # -----------------
 # UTILITY FUNCTIONS
 # -----------------
-
-# Spawns a new terminal in the current directory
-alias double='alacritty --working-directory "$PWD" > /dev/null 2>&1 & disown'
 
 # Create a directory and enter it
 mkcd() {
@@ -121,23 +117,41 @@ mkcd() {
 
 # Smart archive extractor
 extract() {
-  if [ -f $1 ] ; then
-    case $1 in
-          *.tar.bz2)     tar xvjf $1    ;;
-          *.tar.gz)      tar xvzf $1    ;;
-          *.bz2)         bunzip2 $1     ;;
-          *.rar)         unrar x $1     ;;
-          *.gz)          gunzip $1      ;;
-          *.tar)         tar xvf $1     ;;
-          *.tbz2)        tar xvjf $1    ;;
-          *.zip)         unzip $1       ;;
-          *.Z)           uncompress $1  ;;
-          *.7z)          7z x $1        ;;
-          *)             echo "Don't know how to extract '$1'..."
-      esac
-    else
-      echo "'$1' is not a valid file!"
+    for f in "$@"; do
+      if [ -f $f ] ; then
+        case $f in
+              *.rar)         unrar x $f     ;;
+              *.tar.bz2)     tar xvjf $f    ;;
+              *.tar.gz)      tar xvzf $f    ;;
+              *.bz2)         bunzip2 $f     ;;
+              *.gz)          gunzip $f      ;;
+              *.tar)         tar xvf $f     ;;
+              *.tbz2)        tar xvjf $f    ;;
+              *.zip)         unzip $f       ;;
+              *.Z)           uncompress $f  ;;
+              *)             echo "Don't know how to extract '$f'..."
+          esac
+        else
+          echo "'$f' is not a valid file!"
+        fi
+    done
+}
+
+extpls() {
+    if [ -n "$ZSH_VERSION" ]; then
+        setopt local_options no_nomatch
     fi
+
+    mv ~/Downloads/*.{tar,bz2,gz,tbz2,zip,Z,rar,7z} . 2> /dev/null
+
+    for ext in tar bz2 gz tbz2 zip Z rar 7z; do
+        for file in *.$ext; do
+            if [ -f "$file" ]; then
+                extract "$file"
+                rm "$file"
+            fi
+        done
+    done
 }
 
 # Clipboard utilities
@@ -145,8 +159,7 @@ copy() {
     cat "$@" | xsel -b
 }
 
-# Zsh globbing allows (.), Bash does not
-copyfiles() {
+copyname() {
     cat ${@:-.}/**/*(.) | xsel -b
 }
 
@@ -157,14 +170,16 @@ copyfiles() {
 # Wallpaper & Matugen scripts
 alias bg='~/.config/scripts/change_wallpaper.sh'
 alias rbg='(~/.config/scripts/random_wallpaper.sh &)'
-alias bgdir='cd .wallpapers'
+alias bgdir='cd ~/.wallpapers'
 bgadd() {
     cp "$1" ~/.wallpapers
 }
 
 # Custom aliases
+alias err='echo $?'
+alias tarpls='extpls'
 alias clip='copy'
-alias clipfiles='copyfiles'
+alias clipfiles='copyname'
 alias repo='cdg'
 alias update='sudo pacman -Syu'
 alias ff='fastfetch'

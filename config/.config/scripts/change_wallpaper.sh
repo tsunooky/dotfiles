@@ -9,9 +9,9 @@ if [ ! -f "$1" ]; then
   exit 1
 fi
 
-i3 workspace 11 > /dev/null
-sleep 0.2
+i3 workspace 42 > /dev/null
+sleep 0.1
 matugen image "$1"
 feh --bg-fill "$1"
-sleep 0.6
+sleep 0.5
 i3 workspace back_and_forth > /dev/null
