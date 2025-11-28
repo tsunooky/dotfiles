@@ -50,6 +50,11 @@ input_path = '~/.config/matugen/templates/dunstrc'
 output_path = '~/.config/dunst/dunstrc'
 post_hook = 'dunstctl reload'
 
+# Flameshot
+[templates.flameshot]
+input_path = '~/.config/matugen/templates/flameshot.ini'
+output_path = '~/.config/flameshot/flameshot.ini'
+
 # Btop
 [templates.btop]
 input_path = "~/.config/matugen/templates/btop.theme"
