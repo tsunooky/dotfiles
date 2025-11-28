@@ -27,6 +27,7 @@ p7zip
 bash-completion
 clang
 gdb
+universal-ctags
 
 # Xorg Display Server
 xorg-server

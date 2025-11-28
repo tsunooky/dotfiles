@@ -9,10 +9,16 @@ Plugin 'tpope/vim-sensible'
 Plugin 'vim-airline/vim-airline'
 Plugin 'preservim/nerdtree'
 Plugin 'scrooloose/syntastic'
+
+" Re-enabled completor.vim since we removed Coc
 Plugin 'maralla/completor.vim'
+
 Plugin 'yggdroot/indentline'
 Plugin 'matze/vim-move'
 Plugin 'rhysd/vim-clang-format'
+
+" Added Gutentags for automatic tag generation (Go to definition)
+Plugin 'ludovicchabant/vim-gutentags'
 
 call vundle#end()
 filetype plugin indent on
@@ -79,8 +85,8 @@ nnoremap + :tabe<CR>
 
 nnoremap <C-f> :ClangFormat<CR>
 inoremap <C-f> <Esc>:ClangFormat<CR>i
-inoremap <C-t> <Esc>:NERDTreeToggle<CR>i
-nnoremap <C-t> :NERDTreeToggle<CR>
+inoremap <C-T> <Esc>:NERDTreeToggle<CR>i
+nnoremap <C-T> :NERDTreeToggle<CR>
 
 :inoremap { {}<Left>
 
@@ -92,7 +98,7 @@ nnoremap <C-t> :NERDTreeToggle<CR>
 :inoremap @elif else if ()<CR><BS>{<CR><BS>}<Up><CR>a<BS><Up><Up><Right><Right><Right><Right><Right>
 :inoremap @else else<CR><BS>{<CR><BS>}<Up><CR>a<BS>
 :inoremap @marg int main(int argc, char *argv[])<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>return 0;<Up><CR>
-::noremap @main int main(void)<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>return 0;<Up><CR>
+:inoremap @main int main(void)<CR><BS>{<CR><BS>}<Left><CR><Up><Tab>return 0;<Up><CR>
 :inoremap @pf printf("\n");<Left><Left><Left><Left><Left>
 :inoremap @struct struct <CR>{<CR>};<Up><Up><Right><Right><Right><Right><Right>
 
@@ -160,3 +166,25 @@ autocmd BufReadPost *
   \   execute "normal! g`\"" |
   \ endif
 
+" --- GUTENTAGS CONFIGURATION (Go To Definition) ---
+
+" Define where to save the tags file (to avoid cluttering your project)
+let g:gutentags_cache_dir = expand('~/.cache/vim/ctags/')
+
+" Create the cache directory if it doesn't exist
+if !isdirectory(g:gutentags_cache_dir)
+    call mkdir(g:gutentags_cache_dir, 'p')
+endif
+
+" Define project roots (markers that tell vim where the project starts)
+let g:gutentags_project_root = ['.git', 'Makefile', '.hg', '.svn']
+
+" Exclude some files from being indexed
+let g:gutentags_ctags_exclude = [
+      \ '*.git', '*.svg', '*.xml',
+      \ 'build', 'dist', 'bin',
+      \ '*.json', '*.js', '*.css'
+      \ ]
+
+nnoremap gd <C-]>
+nnoremap gb <C-t>
