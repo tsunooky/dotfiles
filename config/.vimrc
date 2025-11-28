@@ -177,7 +177,7 @@ if !isdirectory(g:gutentags_cache_dir)
 endif
 
 " Define project roots (markers that tell vim where the project starts)
-let g:gutentags_project_root = ['.git', 'Makefile', '.hg', '.svn']
+let g:gutentags_project_root = ['.git', '.hg', '.svn']
 
 " Exclude some files from being indexed
 let g:gutentags_ctags_exclude = [
