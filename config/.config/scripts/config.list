@@ -1,4 +1,5 @@
    Bashrc::~/.bashrc
+   Zshrc::~/.zshrc
    Vim::~/.vimrc
    i3lock::~/.config/matugen/templates/lock.sh
    Dunst::~/.config/matugen/templates/dunstrc

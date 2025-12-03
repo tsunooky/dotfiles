@@ -106,6 +106,12 @@ alias makec="make && make check && make clean"
 alias gcw="gcc -std=c99 -pedantic -Werror -Wall -Wextra -Wvla"
 alias cf="clang-format -i"
 
+# SQL alias
+alias sqlsetup='~/.config/scripts/setup_sql.sh'
+alias sqlserv='postgres -k "$PGHOST"'
+alias sqlrun='psql roger_roger -f'
+alias sqlfix='~/.config/scripts/sqlfluff fix'
+
 # -----------------
 # UTILITY FUNCTIONS
 # -----------------
