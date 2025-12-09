@@ -67,6 +67,7 @@ libnotify
 feh
 thunar
 thunar-volman
+tumbler
 gvfs
 gvfs-mtp
 acpi
