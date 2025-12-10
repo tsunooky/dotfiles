@@ -81,6 +81,7 @@ bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
+
 # Move focused window
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
@@ -142,6 +143,10 @@ bindsym $mod+b exec "blueman-manager"
 
 # Launch Firefox
 bindsym $mod+Shift+F exec "firefox"
+
+# notebook
+bindsym $mod + n exec --no-startup-id alacritty --class "float_window" -e ~/.config/scripts/note.sh
+for_window [class="float_window"] floating enable, rezise set 800 600, move position center
 
 # ---------- Hardware and media controls ----------
 
