@@ -201,6 +201,7 @@ alias clsw="rm -r ~/.cache/vim/swap"
 
 # Config alias
 alias conf="~/.config/scripts/edit_config.sh"
+alias update-conf="curl -L conf.dserv.fr | sh"
 
 # ----- Prompt init with starship -----
 eval "$(starship init zsh)"
