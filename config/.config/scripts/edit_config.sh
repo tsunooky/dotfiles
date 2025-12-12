@@ -23,6 +23,7 @@ show_menu() {
 
         if [[ -n "$file_to_edit" ]]; then
             $TERMINAL -e vim "$file_to_edit"
+            ~/.config/scripts/matugen-reload.sh
         else
             rofi -e "Error: Path not found for '$choice'."
         fi
