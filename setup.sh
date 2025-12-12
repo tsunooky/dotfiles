@@ -296,7 +296,7 @@ run_install_scripts() {
         if is_package_installed "i3lock-color" || command -v i3lock &>/dev/null; then
             while read -r -t 0.1; do true; done
             echo -ne "${YELLOW}⚠ i3lock-color is already installed. Do you want to rebuild it? [y/N]: ${NC}"
-            read -r response
+            read -r response < /dev/tty
             if [[ ! "$response" =~ ^[yY]$ ]]; then
                 do_install_i3lock=false
                 log_info "Skipping i3lock-color build per user request."
@@ -323,7 +323,7 @@ run_install_scripts() {
         if command -v yay &>/dev/null; then
             while read -r -t 0.1; do true; done
             echo -ne "${YELLOW}⚠ yay is already installed. Do you want to reinstall it? [y/N]: ${NC}"
-            read -r response
+            read -r response < /dev/tty
             if [[ ! "$response" =~ ^[yY]$ ]]; then
                 do_install_yay=false
                 log_info "Skipping yay installation per user request."
