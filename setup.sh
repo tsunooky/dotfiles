@@ -293,7 +293,8 @@ run_install_scripts() {
         local do_install_i3lock=true
 
         # Check if already installed
-        if is_package_installed "i3lock-color"; then
+        if is_package_installed "i3lock-color" || command -v i3lock &>/dev/null; then
+            while read -r -t 0.1; do true; done
             echo -ne "${YELLOW}⚠ i3lock-color is already installed. Do you want to rebuild it? [y/N]: ${NC}"
             read -r response
             if [[ ! "$response" =~ ^[yY]$ ]]; then
@@ -320,6 +321,7 @@ run_install_scripts() {
 
         # Check if already installed
         if command -v yay &>/dev/null; then
+            while read -r -t 0.1; do true; done
             echo -ne "${YELLOW}⚠ yay is already installed. Do you want to reinstall it? [y/N]: ${NC}"
             read -r response
             if [[ ! "$response" =~ ^[yY]$ ]]; then
