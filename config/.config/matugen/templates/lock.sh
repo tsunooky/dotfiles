@@ -5,8 +5,9 @@ circle_bg={{colors.on_primary.default.hex}}
 circle={{colors.primary.default.hex}}
 error={{colors.error.default.hex}}
 
+i3-msg workspace number 42
+
 i3lock -c $blank \
-    --indicator \
     --inside-color=$blank \
     --insidever-color=$blank \
     --insidewrong-color=$blank \
