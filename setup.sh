@@ -287,30 +287,58 @@ run_install_scripts() {
         INSTALL_LAPTOP="no"
     fi
     
-    # i3lock-color needs to be built from source, run it silently with only log output
+    #--- i3lock-color Logic ---
     local i3lock_script="${SCRIPT_DIR}/install/i3lock-color-install.sh"
     if [ -f "${i3lock_script}" ]; then
-        log_info "Building i3lock-color from source (this may take a moment)..."
-        if bash "${i3lock_script}" >> "${LOGFILE}" 2>&1; then
-            log_success "i3lock-color installed successfully"
-        else
-            log_error "Failed to install i3lock-color (check logs)"
-            return 1
+        local do_install_i3lock=true
+
+        # Check if already installed
+        if is_package_installed "i3lock-color"; then
+            echo -ne "${YELLOW}⚠ i3lock-color is already installed. Do you want to rebuild it? [y/N]: ${NC}"
+            read -r response
+            if [[ ! "$response" =~ ^[yY]$ ]]; then
+                do_install_i3lock=false
+                log_info "Skipping i3lock-color build per user request."
+            fi
+        fi
+
+        if [ "$do_install_i3lock" = true ]; then
+            log_info "Building i3lock-color from source (this may take a moment)..."
+            if bash "${i3lock_script}" >> "${LOGFILE}" 2>&1; then
+                log_success "i3lock-color installed successfully"
+            else
+                log_error "Failed to install i3lock-color (check logs)"
+                return 1
+            fi
         fi
     fi
     
-    # Install yay silently
+    # --- yay Logic ---
     local yay_script="${SCRIPT_DIR}/install/yay-install.sh"
     if [ -f "${yay_script}" ]; then
-        log_info "Installing yay (AUR helper)..."
-        if bash "${yay_script}" >> "${LOGFILE}" 2>&1; then
-            log_success "yay installed successfully"
-        else
-            log_error "Failed to install yay (check logs)"
-            return 1
+        local do_install_yay=true
+
+        # Check if already installed
+        if command -v yay &>/dev/null; then
+            echo -ne "${YELLOW}⚠ yay is already installed. Do you want to reinstall it? [y/N]: ${NC}"
+            read -r response
+            if [[ ! "$response" =~ ^[yY]$ ]]; then
+                do_install_yay=false
+                log_info "Skipping yay installation per user request."
+            fi
+        fi
+
+        if [ "$do_install_yay" = true ]; then
+            log_info "Installing yay (AUR helper)..."
+            if bash "${yay_script}" >> "${LOGFILE}" 2>&1; then
+                log_success "yay installed successfully"
+            else
+                log_error "Failed to install yay (check logs)"
+                return 1
+            fi
         fi
     fi
-    
+
     # Install Firefox configuration silently
     local firefox_script="${SCRIPT_DIR}/install/firefox.sh"
     if [ -f "${firefox_script}" ]; then
