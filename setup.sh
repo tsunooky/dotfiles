@@ -471,7 +471,7 @@ enable_services() {
     fi
     
     # ly display manager
-    if sudo systemctl enable ly.service; then
+    if sudo systemctl enable ly@tty2.service; then
         log_success "ly display manager enabled"
     else
         log_warning "Failed to enable ly (may need to be installed separately)"
