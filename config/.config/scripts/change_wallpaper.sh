@@ -12,6 +12,7 @@ fi
 i3 workspace 42 > /dev/null
 sleep 0.1
 matugen image "$1"
+echo "$1" > ~/.curbg
 feh --bg-fill "$1"
 sleep 0.5
 i3 workspace back_and_forth > /dev/null
