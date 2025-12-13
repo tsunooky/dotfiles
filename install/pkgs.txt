@@ -42,6 +42,7 @@ wireplumber
 pavucontrol
 alsa-utils
 sof-firmware
+playerctl
 
 # Network Management
 networkmanager
