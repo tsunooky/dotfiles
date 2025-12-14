@@ -6,7 +6,7 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/tsunooky/dotfiles.git"
-INSTALL_DIR="/tmp/dotfiles-install"
+INSTALL_DIR=$(mktemp -d -t dotfiles-install.XXXXXX)
 
 # Colors
 RED='\033[0;31m'

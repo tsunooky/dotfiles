@@ -24,10 +24,10 @@ log_error() {
 setDPI() {
     local dpi="$1"
     
-    if [ -f /tmp/dotfiles-install/config/.config/polybar/config.ini ]; then
-        sed -i "s/{{DPI}}/${dpi}/g" /tmp/dotfiles-install/config/.config/polybar/config.ini
+    if [ -f "${SCRIPT_DIR}/config/.config/polybar/config.ini" ]; then
+    sed -i "s/{{DPI}}/${dpi}/g" "${SCRIPT_DIR}/config/.config/polybar/config.ini"
     else
-        log_error "Polybar config not found at /tmp/dotfiles-install/config/.config/polybar/config.ini"
+        log_error "Polybar config not found at ${SCRIPT_DIR}/config/.config/polybar/config.ini"
         return 1
     fi
     

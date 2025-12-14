@@ -13,7 +13,7 @@ clear
 # ============================================================================
 
 LOGFILE="/var/log/dotfiles-install.log"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMP_INSTALLED_PKGS="/tmp/dotfiles-installed-pkgs.txt"
 
 # Colors for output
