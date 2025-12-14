@@ -582,7 +582,11 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-# Create log file if it doesn't exist
+# Reset log file (delete old one if exists)
+if [ -f "${LOGFILE}" ]; then
+    sudo rm -f "${LOGFILE}"
+fi
+# Create fresh log file
 sudo touch "${LOGFILE}"
 sudo chmod 666 "${LOGFILE}"
 
