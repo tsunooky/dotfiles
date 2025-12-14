@@ -51,33 +51,6 @@ log_info "User Preferences Configuration"
 log_info "=========================================="
 echo ""
 
-# Ask about Neovim
-read -p "Do you want to install Neovim? [Y/n] " response_nvim
-response_nvim_lower=${response_nvim,,}
-
-INSTALL_NVIM="yes"
-INSTALL_NVCHAD="no"
-
-if [[ "$response_nvim_lower" == "n" ]]; then
-    INSTALL_NVIM="no"
-    log_info "Neovim will not be installed"
-else
-    INSTALL_NVIM="yes"
-    log_success "Neovim will be installed"
-    
-    # Ask about NvChad
-    read -p "Do you want to install NvChad (Neovim configuration)? [Y/n] " response_nvchad
-    response_nvchad_lower=${response_nvchad,,}
-    
-    if [[ "$response_nvchad_lower" != "n" ]]; then
-        INSTALL_NVCHAD="yes"
-        log_success "NvChad will be installed"
-    else
-        INSTALL_NVCHAD="no"
-        log_info "NvChad will not be installed"
-    fi
-fi
-
 echo ""
 log_info "------------------------------------------"
 log_info "Laptop Configuration"
@@ -117,14 +90,10 @@ fi
 setDPI "$user_dpi" || exit 1
 
 # Export preferences for setup.sh to use
-export USER_PREF_INSTALL_NVIM="${INSTALL_NVIM}"
-export USER_PREF_INSTALL_NVCHAD="${INSTALL_NVCHAD}"
 export USER_PREF_INSTALL_LAPTOP="${INSTALL_LAPTOP}"
 
 # Save preferences to a file for the main script
 cat > /tmp/dotfiles-user-prefs.conf << EOF
-INSTALL_NVIM=${INSTALL_NVIM}
-INSTALL_NVCHAD=${INSTALL_NVCHAD}
 INSTALL_LAPTOP=${INSTALL_LAPTOP}
 EOF
 

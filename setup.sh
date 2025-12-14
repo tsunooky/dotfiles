@@ -282,8 +282,6 @@ run_install_scripts() {
         log_info "Loaded user preferences"
     else
         # Default values
-        INSTALL_NVIM="yes"
-        INSTALL_NVCHAD="yes"
         INSTALL_LAPTOP="no"
     fi
     
@@ -350,20 +348,6 @@ run_install_scripts() {
         else
             log_error "Failed to configure Firefox (check logs)"
             return 1
-        fi
-    fi
-    
-    # Add nvchad script if user wants it
-    if [[ "${INSTALL_NVCHAD}" == "yes" ]]; then
-        local nvchad_script="${SCRIPT_DIR}/install/nv-chad-install.sh"
-        if [ -f "${nvchad_script}" ]; then
-            log_info "Installing NvChad..."
-            if bash "${nvchad_script}" >> "${LOGFILE}" 2>&1; then
-                log_success "NvChad installed successfully"
-            else
-                log_error "Failed to install NvChad (check logs)"
-                return 1
-            fi
         fi
     fi
     
