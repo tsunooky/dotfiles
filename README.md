@@ -1,6 +1,7 @@
 # 💠 Tsunooky and Darkrentin's dotfiles
 
 A clean, automated, and aesthetic Arch Linux configuration using i3wm.
+
 This setup includes terminal autocompletion, a modern polybar, custom Vim bindings, and dynamic color theming using **Matugen**.
 
 ## 📦 Installation
