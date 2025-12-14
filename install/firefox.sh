@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -d "$HOME/.cache/yay/python-pywalfox" ]; then
+    rm -rf "$HOME/.cache/yay/python-pywalfox"
+fi
+
 yay -S --noconfirm --answerdiff None --answerclean None python-pywalfox && \
 sudo pywalfox install && \
 sudo mkdir -p /etc/firefox/policies/ && \
