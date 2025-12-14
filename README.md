@@ -1,13 +1,12 @@
 # 💠 Tsunooky and Darkrentin's dotfiles
 
 A clean, automated, and aesthetic Arch Linux configuration using i3wm.
-
-This setup includes terminal autocompletion (zsh), a modern polybar, custom Vim bindings, and dynamic color theming using **Matugen**.
+This setup includes terminal autocompletion, a modern polybar, custom Vim bindings, and dynamic color theming using **Matugen**.
 
 ## 📦 Installation
 
 ### 💠 Installation
-**WARNING:** This will override ALL your configuration files. This is meant to be installed on a brand new Arch minimal 
+**WARNING:** Theses dotfiles are meant to be installed on a brand new Arch minimal install. This will override ALL your configuration files.
 
 Run the following command in your terminal to install everything automatically:
 
@@ -70,7 +69,6 @@ This configuration includes a suite of commands you can use inside the terminal 
 | `extract <file(s)>` | Extract a file of any type (`.tar`, `.zip`, etc.) |
 | `extpls` | Moves all compressed files from Downloads, and extracts the content in current directory |
 | `cf <file(s)>` | Run `clang-format -i` on given files |
-| `cfe` | Apply **Clang Format** on every files in current repository |
 | `makec` | runs `make && make check && make clean` (The holy trinity) |
 | `gcw` | `gcc` with all required EPITA flags (`-Werror -Wall -Wextra -Wvla`...) |
 
@@ -130,4 +128,3 @@ Type these specific triggers in **Insert Mode** to instantly expand code structu
 | `@if` / `@else` | Standard `if` / `else` blocks |
 | `@struct` | `struct { ... };` template |
 | `@pf` | `printf("\n");` |
-
