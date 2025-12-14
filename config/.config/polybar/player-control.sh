@@ -19,5 +19,5 @@ else
     ICON=""
 fi
 
-echo "$TITLE   %{A1:playerctl previous:}%{A} %{A1:playerctl play-pause:} $ICON %{A} %{A1:playerctl next:}%{A}"
+echo "$TITLE  %{A1:playerctl previous:}%{A} %{A1:playerctl play-pause:} $ICON %{A} %{A1:playerctl next:}%{A}"
 
