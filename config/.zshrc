@@ -20,17 +20,11 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # ENVIRONMENT VARIABLES & PATH
 # ----------------------------
 
-export EDITOR=vim
-
-export PGDATA="$HOME/postgres_data"
-export PGHOST="/tmp"
-
 export PATH=$PATH:~/.local/bin/
 export PATH=$PATH:~/.cargo/bin/
 
 # Ensure unique paths (Zsh specific)
 typeset -U path
-export PATH
 
 # TAB colors
 if [ -x /usr/bin/dircolors ]; then
@@ -45,35 +39,17 @@ export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08
 # -----------------------
 
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=20000
+HISTSIZE=1000
+SAVEHIST=2000
 
 # Share history and ignore duplicates
-setopt APPEND_HISTORY
+setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
-setopt HIST_REDUCE_BLANKS
-HISTORY_IGNORE="(lsd|sl|ls|l|ll|la|cd|exit|clear|history|bg|fg)"
 
 # Navigation options
 setopt AUTO_CD
-
-# Fix weird keys mapping
-bindkey -e
-bindkey "^[[H"  beginning-of-line      # Home
-bindkey "^[[F"  end-of-line            # End
-bindkey "^[[3~" delete-char            # Delete
-bindkey "^?"    backward-delete-char   # Backspace
-# Fix Ctrl + Arrows
-bindkey '^[[1;5C' forward-word         # Ctrl + Right
-bindkey '^[[1;5D' backward-word        # Ctrl + Left
-# Fix Home/End variants
-bindkey '^[[1~' beginning-of-line
-bindkey '^[[4~' end-of-line
-# Other fixes
-autoload -U select-word-style
-select-word-style bash
-bindkey \^U backward-kill-line
+setopt CORRECT
 
 # ------------------------------
 # GENERAL ALIASES & REPLACEMENTS
@@ -104,7 +80,7 @@ alias gpu='git pull'
 alias gl="git log --graph --abbrev-commit --decorate --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
 alias gt='git tag -ma'
 alias gpt='git push --follow-tags'
-alias gd='git diff | bat -pp'
+alias gd='git diff --name-only --relative --diff-filter=d -z | xargs -0 bat --diff'
 
 # Go to the root of current git repository
 cdg() {
@@ -118,31 +94,12 @@ cdg() {
     fi
 }
 
-# All in one git command
-gg() {
-    cdg
-    git add .
-    git commit -m "added features"
-    if [ $# -eq 1 ]; then
-        git tag -ma $1
-        git push --follow-tags
-    else
-        git push
-    fi
-    cd - > /dev/null
-}
-
 # ---------------------
 # EPITA & C PROGRAMMING
 # ---------------------
 
 # Spawns a new terminal in the current directory
 alias double='alacritty --working-directory "$PWD" > /dev/null 2>&1 & disown'
-
-# School shortcuts
-alias intra="firefox https://intra.forge.epita.fr/"
-alias moodle="firefox https://moodle.epita.fr/my/"
-alias forge="firefox https://cri.epita.fr/"
 
 # C Dev shortcuts
 alias makec="make && make check && make clean"
@@ -152,21 +109,8 @@ alias cf="clang-format -i"
 # SQL alias
 alias sqlsetup='~/.config/scripts/setup_sql.sh'
 alias sqlserv='postgres -k "$PGHOST"'
+alias sqlrun='psql roger_roger -f'
 alias sqlfix='~/.config/scripts/sqlfluff fix'
-sqlrun()
-{
-    if [ $# -ne 1 ]; then
-        echo 'usage: sqlrun <file>.sql'
-    elif [ ! -f $1 ]; then
-        echo "error : $1: file not found"
-    else
-        OUTPUT_FILE=/tmp/sqloutput.csv
-        echo "(empty)" > $OUTPUT_FILE
-        psql roger_roger -f $@ > $OUTPUT_FILE
-        bat -p $OUTPUT_FILE
-        rm $OUTPUT_FILE
-    fi
-}
 
 # -----------------
 # UTILITY FUNCTIONS
@@ -254,6 +198,7 @@ alias repo='cdg'
 alias update='sudo pacman -Syu'
 alias ff='fastfetch'
 alias clsw="rm -r ~/.cache/vim/swap"
+alias todo="~/.config/scripts/todo"
 
 # Config alias
 alias conf="~/.config/scripts/edit_config.sh"
