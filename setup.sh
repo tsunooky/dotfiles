@@ -68,12 +68,12 @@ trap cleanup_on_error ERR
 
 show_banner() {
     echo -e "${BOLD}${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}      /\ ${NC}                                             ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}     /  \ ${NC}      ${BOLD}ARCH LINUX${NC}                         ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}    /    \ ${NC}     ${BOLD}DOTFILES INSTALLER${NC}                 ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}   /  /\  \ ${NC}    Setup & Configuration               ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}  /  /  \  \ ${NC}                                       ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN} /  /    \  \ ${NC}                                      ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}      /\ ${NC}                                                ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}     /  \ ${NC}      ${BOLD}ARCH LINUX${NC}                               ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}    /    \ ${NC}     ${BOLD}DOTFILES INSTALLER${NC}                       ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}   /  /\  \ ${NC}    Setup & Configuration                    ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}  /  /  \  \ ${NC}                                            ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN} /  /    \  \ ${NC}                                           ${BOLD}${BLUE}║${NC}"
     echo -e "${BOLD}${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
