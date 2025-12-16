@@ -7,7 +7,7 @@ error={{colors.error.default.hex}}
 
 i3-msg workspace number 42
 
-i3lock -c $blank \
+i3lock -n -c $blank \
     --inside-color=$blank \
     --insidever-color=$blank \
     --insidewrong-color=$blank \
@@ -20,3 +20,5 @@ i3lock -c $blank \
     --verif-color=$circle \
     --wrong-color=$error \
     --modif-color=$circle_bg \
+
+i3-msg workspace back_and_forth

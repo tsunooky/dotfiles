@@ -1,8 +1,5 @@
 Faire un guide d'installation Arch
 
-README
-
-
 
 
 How to start on Arch?
@@ -20,12 +17,7 @@ Proberly remove a package on Arch:
 sudo pacman -Rcns <package>
 
 
-- Put vim shortcuts in NV Chad
-
-
 Modify alacritty matugen colors
-
-Rofi + powermenu
 
 Keybinds helper (maybe rofi) : i3, vim, bashrc commands etc...
 
@@ -39,6 +31,4 @@ then:
 ssh -T git@github.com
 On each repo for github to push with ssh keys:
 git remote set-url origin git@github.com:your-repository.git
-
-Regler problemes de compatibilites avec ecrans 4k : Xressources, polybar, rofi
 
