@@ -1,7 +1,14 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-REAL_USER=${SUDO_USER:-$USER}
+if ! command -v zsh &> /dev/null; then
+    echo "Error: zsh is not installed."
+    exit 1
+fi
 
-sudo usermod --shell /usr/bin/zsh "$REAL_USER"
-
-exit 0
+if [ "$SHELL" != "$(which zsh)" ]; then
+    echo "Changing shell to zsh for user $USER..."
+    sudo chsh -s "$(which zsh)" "$USER"
+else
+    echo "Shell is already zsh."
+fi

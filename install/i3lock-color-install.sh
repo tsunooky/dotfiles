@@ -1,17 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-sudo pacman -S --noconfirm --needed autoconf cairo fontconfig gcc libev libjpeg-turbo libxinerama libxkbcommon-x11 libxrandr pam pkgconf xcb-util-image xcb-util-xrm
-
-rm -rf /tmp/i3lock-color
-
-git clone https://github.com/Raymo111/i3lock-color.git /tmp/i3lock-color
-
-cd /tmp/i3lock-color
-
-./build.sh
-
-./install-i3lock-color.sh
-
-cd -
-
-rm -rf /tmp/i3lock-color
+if command -v yay &> /dev/null; then
+    echo "Installing i3lock-color from AUR..."
+    yay -S --noconfirm --needed i3lock-color
+else
+    echo "Error: yay is missing, cannot install i3lock-color."
+    exit 1
+fi

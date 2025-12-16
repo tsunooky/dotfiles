@@ -1,11 +1,26 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-rm -rf ~/yay-bin
+if command -v yay &> /dev/null; then
+    echo "yay is already installed."
+    exit 0
+fi
 
-cd ~ && git clone https://aur.archlinux.org/yay-bin.git
-cd ~/yay-bin/ && makepkg -rsi --noconfirm
-cd ~ && rm -Rf ~/yay-bin/
+TEMP_DIR=$(mktemp -d)
+echo "Building yay in $TEMP_DIR..."
 
-yay -Y --devel --save && yay -Y --gendb
+git clone https://aur.archlinux.org/yay-bin.git "$TEMP_DIR/yay-bin"
+cd "$TEMP_DIR/yay-bin"
+
+makepkg -rsi --noconfirm
+
+yay -Y --devel --save
+yay -Y --gendb
+
 mkdir -p ~/.config/yay
-sed -i 's/"sudoloop": false/"sudoloop": true/' ~/.config/yay/config.json;
+if [ -f ~/.config/yay/config.json ]; then
+    sed -i 's/"sudoloop": false/"sudoloop": true/' ~/.config/yay/config.json
+fi
+
+cd ~
+rm -rf "$TEMP_DIR"
