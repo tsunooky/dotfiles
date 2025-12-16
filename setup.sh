@@ -3,6 +3,9 @@
 # Robust Arch Linux Dotfiles Installation Script
 # Exit on any error, log everything
 
+# Clear screen immediately before anything else
+clear
+
 set -euo pipefail
 
 # ============================================================================
@@ -12,13 +15,14 @@ set -euo pipefail
 LOGFILE="/var/log/dotfiles-install.log"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMP_PKGS="/tmp/dotfiles-installed-pkgs.txt"
-SEP_MAIN="════════════════════════════════════════════════════════════" # 60 chars
+SEP_MAIN="════════════════════════════════════════════════════════════"
 
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;36m'
+BLUE='\033[0;34m'   # Arch Blue darker
+CYAN='\033[0;36m'   # Arch Cyan lighter
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -40,7 +44,8 @@ log_main_title() {
 }
 
 log_group_title() {
-    log "${BOLD}${BLUE}──── $1 ────${NC}"
+    # Cyan color for groups
+    log "${BOLD}${CYAN}──── $1 ────${NC}"
 }
 
 cleanup_on_error() {
@@ -57,6 +62,23 @@ cleanup_on_error() {
 }
 
 trap cleanup_on_error ERR
+
+# ============================================================================
+# VISUALS
+# ============================================================================
+
+show_banner() {
+    echo -e "${BOLD}${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}       /\ ${NC}                                            ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}      /  \ ${NC}      ${BOLD}ARCH LINUX${NC}                        ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}     /    \ ${NC}     ${BOLD}DOTFILES INSTALLER${NC}                ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}    /  /\  \ ${NC}    Setup & Configuration              ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}   /  /  \  \ ${NC}                                      ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}  /  /    \  \ ${NC}                                     ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${CYAN}   Logs are detailed in: ${LOGFILE}${NC}"
+    echo ""
+}
 
 # ============================================================================
 # HARDWARE DETECTION
@@ -139,6 +161,7 @@ install_group() {
         [[ -z "${pkg}" || "${pkg}" =~ ^# ]] && continue
         install_package "${pkg}" "pacman"
     done
+    echo "" # Empty line after group
 }
 
 # ============================================================================
@@ -292,26 +315,30 @@ EOF
 # ============================================================================
 
 main() {
-    clear
+    # 1. Clear screen is at the very top of file
+    
+    # 2. Check root
     if [ "$EUID" -eq 0 ]; then
         echo -e "${RED}Error: Do not run this script as root. Use a regular user with sudo privileges.${NC}"
         exit 1
     fi
 
+    # 3. Show Banner BEFORE sudo prompt
+    show_banner
+
+    # 4. Init Log & Sudo Prompt
+    # This is where the password will be asked
     sudo touch "${LOGFILE}" && sudo chmod 666 "${LOGFILE}"
     > "${TEMP_PKGS}"
     
-    echo -e "${BOLD}${BLUE}${SEP_MAIN}${NC}"
-    echo -e "${BOLD}${BLUE}   Arch Linux Dotfiles Installer${NC}"
-    echo -e "${BOLD}${BLUE}${SEP_MAIN}${NC}"
-    echo -e "Logs are detailed in: ${LOGFILE}"
-    
+    # 5. Start Process
     configure_hardware
     initial_setup
     install_packages_from_file
     run_scripts
     finalize
     
+    # 6. Cleanup & End
     rm -f "${TEMP_PKGS}"
     
     echo ""
