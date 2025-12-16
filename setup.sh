@@ -71,6 +71,87 @@ cleanup_on_error() {
 trap cleanup_on_error ERR
 
 # ============================================================================
+# HARDWARE DETECTION & PREFERENCES (NEW INTEGRATION)
+# ============================================================================
+
+configure_hardware() {
+    log_info "=========================================="
+    log_info "Auto-detecting Hardware Configuration"
+    log_info "=========================================="
+
+    # --- 1. Detect Laptop/Battery ---
+    log_info "Checking for laptop battery..."
+    local install_laptop="no"
+    
+    # Check for battery directories in /sys/class/power_supply/
+    if ls /sys/class/power_supply/BAT* 1> /dev/null 2>&1; then
+        install_laptop="yes"
+        log_success "Battery detected. System identified as LAPTOP."
+        log_info "TLP and laptop optimizations will be installed."
+    else
+        log_info "No battery detected. System identified as DESKTOP."
+    fi
+
+    # Save preference for later usage in run_install_scripts
+    export USER_PREF_INSTALL_LAPTOP="${install_laptop}"
+    cat > /tmp/dotfiles-user-prefs.conf << EOF
+INSTALL_LAPTOP=${install_laptop}
+EOF
+
+    # --- 2. Detect Screen Resolution & DPI ---
+    log_info "Detecting screen resolution for DPI calculation..."
+    local detected_dpi="96" # Default fallback
+    
+    if command -v xrandr >/dev/null 2>&1; then
+        # Get the active resolution (line with *)
+        local current_res
+        current_res=$(xrandr 2>/dev/null | grep '*' | awk '{print $1}' | head -n 1)
+        
+        if [ -n "$current_res" ]; then
+            local screen_width
+            screen_width=$(echo "$current_res" | cut -d'x' -f1)
+            
+            log_info "Detected Resolution: ${current_res}"
+            
+            # DPI Calculation Logic
+            if [ "$screen_width" -ge 3000 ]; then
+                detected_dpi="192" # High DPI / 4K / MacBook Pro
+            elif [ "$screen_width" -ge 2100 ]; then
+                detected_dpi="144" # 2K / QHD
+            else
+                detected_dpi="96"  # FHD / Standard
+            fi
+        else
+            log_warning "xrandr returned no active mode. Defaulting to 96 DPI."
+        fi
+    else
+        log_warning "xrandr command not found. Cannot auto-detect DPI. Defaulting to 96 DPI."
+    fi
+
+    # --- 3. Apply DPI Configuration ---
+    
+    # Update Polybar config template in the source directory
+    if [ -f "${SCRIPT_DIR}/config/.config/polybar/config.ini" ]; then
+        sed -i "s/{{DPI}}/${detected_dpi}/g" "${SCRIPT_DIR}/config/.config/polybar/config.ini"
+        log_success "Polybar config updated with DPI: ${detected_dpi}"
+    else
+        log_error "Polybar config not found at ${SCRIPT_DIR}/config/.config/polybar/config.ini"
+        return 1
+    fi
+    
+    # Generate .Xresources in the source directory (so it gets copied later)
+    echo "Xft.dpi: ${detected_dpi}
+Xft.autohint: 0
+Xft.lcdfilter: lcddefault
+Xft.hintstyle: hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb" > "${SCRIPT_DIR}/config/.Xresources"
+    
+    log_success ".Xresources generated with DPI: ${detected_dpi}"
+}
+
+# ============================================================================
 # PACKAGE MANAGEMENT FUNCTIONS
 # ============================================================================
 
@@ -190,6 +271,8 @@ initial_setup() {
     # Install essential packages
     install_package "archlinux-keyring" "pacman"
     install_package "sed" "pacman"
+    # Ensure xrandr is available for future checks if not already present
+    install_package "xorg-xrandr" "pacman"
     
     # Run pacman configuration
     if [ -f "${SCRIPT_DIR}/install/pacman.sh" ]; then
@@ -276,12 +359,12 @@ run_install_scripts() {
     log_info " ${BOLD}${MAGENTA}Additional Components Installation${NC}   " 
     log_info "════════════════════════════════════════════════════════════"
     
-    # Load user preferences if available
+    # Load user preferences (Created by configure_hardware)
     if [ -f /tmp/dotfiles-user-prefs.conf ]; then
         source /tmp/dotfiles-user-prefs.conf
         log_info "Loaded user preferences"
     else
-        # Default values
+        # Default values fallback
         INSTALL_LAPTOP="no"
     fi
     
@@ -290,19 +373,14 @@ run_install_scripts() {
     if [ -f "${i3lock_script}" ]; then
         local do_install_i3lock=true
 
-        # Check if already installed
         if is_package_installed "i3lock-color" || command -v i3lock &>/dev/null; then
-            while read -r -t 0.1; do true; done
-            echo -ne "${YELLOW}⚠ i3lock-color is already installed. Do you want to rebuild it? [y/N]: ${NC}"
-            read -r response < /dev/tty
-            if [[ ! "$response" =~ ^[yY]$ ]]; then
-                do_install_i3lock=false
-                log_info "Skipping i3lock-color build per user request."
-            fi
+            # Automated mode: skip rebuild if present
+            do_install_i3lock=false
+            log_info "i3lock-color already installed, skipping rebuild."
         fi
 
         if [ "$do_install_i3lock" = true ]; then
-            log_info "Building i3lock-color from source (this may take a moment)..."
+            log_info "Building i3lock-color from source..."
             if bash "${i3lock_script}" >> "${LOGFILE}" 2>&1; then
                 log_success "i3lock-color installed successfully"
             else
@@ -317,15 +395,9 @@ run_install_scripts() {
     if [ -f "${yay_script}" ]; then
         local do_install_yay=true
 
-        # Check if already installed
         if command -v yay &>/dev/null; then
-            while read -r -t 0.1; do true; done
-            echo -ne "${YELLOW}⚠ yay is already installed. Do you want to reinstall it? [y/N]: ${NC}"
-            read -r response < /dev/tty
-            if [[ ! "$response" =~ ^[yY]$ ]]; then
-                do_install_yay=false
-                log_info "Skipping yay installation per user request."
-            fi
+            do_install_yay=false
+            log_info "yay already installed, skipping."
         fi
 
         if [ "$do_install_yay" = true ]; then
@@ -536,25 +608,28 @@ main() {
     # Initialize temp file
     > "${TEMP_INSTALLED_PKGS}"
     
-    # Run user preferences FIRST
-    local user_prefs="${SCRIPT_DIR}/install/user-preferences.sh"
-    if [ -f "${user_prefs}" ]; then
-        chmod +x "${user_prefs}"
-        if bash "${user_prefs}"; then
-            log_success "User preferences configured"
-        else
-            log_error "Failed to configure user preferences"
-            exit 1
-        fi
-    fi
+    # 1. Run Hardware Detection (Merged logic)
+    configure_hardware
     
-    # Run installation steps
+    # 2. Update System
     update_system || exit 1
+    
+    # 3. Initial Setup (Pacman etc)
     initial_setup || exit 1
+    
+    # 4. Install Core Packages
     install_packages_from_file || exit 1
+    
+    # 5. Copy Configs (This will copy the configured Polybar/.Xresources)
     copy_config_files || exit 1
+    
+    # 6. Run External Install Scripts (Yay, Vim, Zsh, Laptop packages)
     run_install_scripts || exit 1
+    
+    # 7. Enable Services
     enable_services || exit 1
+    
+    # 8. Finalize
     finalize_setup || exit 1
     
     # Cleanup temp file
