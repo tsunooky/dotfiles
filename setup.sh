@@ -3,7 +3,7 @@
 # Robust Arch Linux Dotfiles Installation Script
 # Exit on any error, log everything
 
-# Clear screen immediately before anything else
+# Clear screen immediately
 clear
 
 set -euo pipefail
@@ -20,9 +20,8 @@ SEP_MAIN="═══════════════════════�
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'   # Arch Blue darker
-CYAN='\033[0;36m'   # Arch Cyan lighter
+BLUE='\033[0;34m'   # Arch Blue (Darker)
+CYAN='\033[0;36m'   # Arch Cyan (Lighter)
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -44,8 +43,8 @@ log_main_title() {
 }
 
 log_group_title() {
-    # Cyan color for groups
-    log "${BOLD}${CYAN}──── $1 ────${NC}"
+    # Blue for groups (inverted from previous cyan)
+    log "${BOLD}${BLUE}──── $1 ────${NC}"
 }
 
 cleanup_on_error() {
@@ -69,14 +68,13 @@ trap cleanup_on_error ERR
 
 show_banner() {
     echo -e "${BOLD}${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}       /\ ${NC}                                            ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}      /  \ ${NC}      ${BOLD}ARCH LINUX${NC}                        ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}     /    \ ${NC}     ${BOLD}DOTFILES INSTALLER${NC}                ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}    /  /\  \ ${NC}    Setup & Configuration              ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}   /  /  \  \ ${NC}                                      ${BOLD}${BLUE}║${NC}"
-    echo -e "${BOLD}${BLUE}║${NC}   ${BOLD}${CYAN}  /  /    \  \ ${NC}                                     ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}      /\ ${NC}                                             ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}     /  \ ${NC}      ${BOLD}ARCH LINUX${NC}                         ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}    /    \ ${NC}     ${BOLD}DOTFILES INSTALLER${NC}                 ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}   /  /\  \ ${NC}    Setup & Configuration               ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN}  /  /  \  \ ${NC}                                       ${BOLD}${BLUE}║${NC}"
+    echo -e "${BOLD}${BLUE}║${NC}  ${BOLD}${CYAN} /  /    \  \ ${NC}                                      ${BOLD}${BLUE}║${NC}"
     echo -e "${BOLD}${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
-    echo -e "${CYAN}   Logs are detailed in: ${LOGFILE}${NC}"
     echo ""
 }
 
@@ -92,7 +90,7 @@ configure_hardware() {
         install_laptop="yes"
         log "${GREEN}✓ Laptop detected (Battery found)${NC}"
     else
-        log "${BLUE}ℹ Desktop detected (No battery)${NC}"
+        log "${CYAN}• Desktop detected (No battery)${NC}"
     fi
 
     export USER_PREF_INSTALL_LAPTOP="${install_laptop}"
@@ -139,8 +137,8 @@ install_package() {
     local manager="${2:-pacman}"
     
     if pacman -Qi "$pkg" &>/dev/null || (command -v yay &>/dev/null && yay -Qi "$pkg" &>/dev/null); then
-        log "${BLUE}  • ${pkg} (already installed)${NC}"
-        echo "  • ${pkg} already installed" >> "${LOGFILE}"
+        log "${CYAN}• ${pkg} (already installed)${NC}"
+        echo "• ${pkg} already installed" >> "${LOGFILE}"
         return 0
     fi
     
@@ -151,7 +149,7 @@ install_package() {
     fi
     
     echo "${pkg}" >> "${TEMP_PKGS}"
-    log "${GREEN}  ✓ Installed: ${pkg}${NC}"
+    log "${GREEN}✓ Installed: ${pkg}${NC}"
 }
 
 install_group() {
@@ -171,27 +169,27 @@ install_group() {
 initial_setup() {
     log_main_title "System Update & Essential Setup"
     
-    log "${BLUE}  • Updating system...${NC}"
+    log "${CYAN}• Updating system...${NC}"
     if sudo pacman -Syu --noconfirm >> "${LOGFILE}" 2>&1; then
-        log "${GREEN}  ✓ System updated successfully${NC}"
+        log "${GREEN}✓ System updated successfully${NC}"
     else
-        log "${RED}  ✗ Failed to update system. Check ${LOGFILE}${NC}"
+        log "${RED}✗ Failed to update system. Check ${LOGFILE}${NC}"
         return 1
     fi
     
-    log "${BLUE}  • Enabling rfkill-unblock service...${NC}"
+    log "${CYAN}• Enabling rfkill-unblock service...${NC}"
     if sudo systemctl enable rfkill-unblock@all 2>/dev/null; then
-        log "${GREEN}  ✓ rfkill-unblock@all enabled${NC}"
+        log "${GREEN}✓ rfkill-unblock@all enabled${NC}"
     else
-        log "${YELLOW}  ⚠ Failed to enable rfkill-unblock@all (service may not exist)${NC}"
+        log "${YELLOW}⚠ Failed to enable rfkill-unblock@all (service may not exist)${NC}"
     fi
     
-    log "${BLUE}  • Installing essential tools (archlinux-keyring, sed, xorg-xrandr)...${NC}"
+    log "${CYAN}• Installing essential tools (archlinux-keyring, sed, xorg-xrandr)...${NC}"
     install_package "archlinux-keyring"
     install_package "sed"
     install_package "xorg-xrandr"
 
-    log "${BLUE}  • Configuring Pacman with 'ILoveCandy' option...${NC}"
+    log "${CYAN}• Configuring Pacman with 'ILoveCandy' option...${NC}"
     sudo sed -i '/ILoveCandy/d' /etc/pacman.conf
     sudo sed -i '/^\[options\]/a ILoveCandy' /etc/pacman.conf
 }
@@ -229,74 +227,74 @@ run_scripts() {
     
     # Yay
     if ! command -v yay &>/dev/null; then
-        log "${BLUE}  • Installing yay (AUR helper)...${NC}"
+        log "${CYAN}• Installing yay (AUR helper)...${NC}"
         [ -f "${SCRIPT_DIR}/install/yay-install.sh" ] && bash "${SCRIPT_DIR}/install/yay-install.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}  ✓ yay installed${NC}"
+        log "${GREEN}✓ yay installed${NC}"
     else
-        log "${BLUE}  • yay already installed, skipping.${NC}"
+        log "${CYAN}• yay already installed, skipping.${NC}"
     fi
 
     # i3lock-color
     if ! command -v i3lock &>/dev/null; then
-        log "${BLUE}  • Building i3lock-color from source...${NC}"
+        log "${CYAN}• Building i3lock-color from source...${NC}"
         [ -f "${SCRIPT_DIR}/install/i3lock-color-install.sh" ] && bash "${SCRIPT_DIR}/install/i3lock-color-install.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}  ✓ i3lock-color installed${NC}"
+        log "${GREEN}✓ i3lock-color installed${NC}"
     else
-        log "${BLUE}  • i3lock-color already installed, skipping rebuild.${NC}"
+        log "${CYAN}• i3lock-color already installed, skipping rebuild.${NC}"
     fi
 
     # Config Scripts
     local scripts=("firefox.sh" "vim-install.sh" "zsh-install.sh")
     for s in "${scripts[@]}"; do
         if [ -f "${SCRIPT_DIR}/install/$s" ]; then
-            log "${BLUE}  • Configuring $(echo $s | cut -d'-' -f1 | cut -d'.' -f1)...${NC}"
+            log "${CYAN}• Configuring $(echo $s | cut -d'-' -f1 | cut -d'.' -f1)...${NC}"
             bash "${SCRIPT_DIR}/install/$s" >> "${LOGFILE}" 2>&1
-            log "${GREEN}  ✓ $(echo $s | cut -d'-' -f1 | cut -d'.' -f1) configured${NC}"
+            log "${GREEN}✓ $(echo $s | cut -d'-' -f1 | cut -d'.' -f1) configured${NC}"
         fi
     done
 
     # Laptop
     source /tmp/dotfiles-user-prefs.conf
     if [[ "${INSTALL_LAPTOP}" == "yes" ]] && [ -f "${SCRIPT_DIR}/install/laptop.sh" ]; then
-        log "${BLUE}  • Applying laptop optimizations (TLP, acpid)...${NC}"
+        log "${CYAN}• Applying laptop optimizations (TLP, acpid)...${NC}"
         bash "${SCRIPT_DIR}/install/laptop.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}  ✓ Laptop optimizations applied${NC}"
+        log "${GREEN}✓ Laptop optimizations applied${NC}"
     fi
     
     # Matugen
     if command -v yay &>/dev/null; then
-        log "${BLUE}  • Installing matugen-bin...${NC}"
+        log "${CYAN}• Installing matugen-bin...${NC}"
         install_package "matugen-bin" "yay"
     else
-        log "${YELLOW}  ⚠ yay not found, skipping matugen-bin installation.${NC}"
+        log "${YELLOW}⚠ yay not found, skipping matugen-bin installation.${NC}"
     fi
 }
 
 finalize() {
     log_main_title "Finalizing Setup"
     
-    log "${BLUE}  • Copying configuration files...${NC}"
+    log "${CYAN}• Copying configuration files...${NC}"
     cp -a "${SCRIPT_DIR}/config/." ~/
-    log "${GREEN}  ✓ Configuration files copied${NC}"
+    log "${GREEN}✓ Configuration files copied${NC}"
     
-    log "${BLUE}  • Enabling system services...${NC}"
+    log "${CYAN}• Enabling system services...${NC}"
     sudo systemctl enable NetworkManager 2>/dev/null || true
     sudo systemctl enable ly@tty2 2>/dev/null || true
     systemctl --user enable pipewire-pulse wireplumber 2>/dev/null || true
-    log "${GREEN}  ✓ Services enabled${NC}"
+    log "${GREEN}✓ Services enabled${NC}"
     
-    log "${BLUE}  • Setting GTK theme and updating font cache...${NC}"
+    log "${CYAN}• Setting GTK theme and updating font cache...${NC}"
     export GTK_THEME="Adwaita:dark"
     fc-cache -f >/dev/null 2>&1
-    log "${GREEN}  ✓ GTK theme set, font cache updated${NC}"
+    log "${GREEN}✓ GTK theme set, font cache updated${NC}"
     
-    log "${BLUE}  • Creating background script...${NC}"
+    log "${CYAN}• Creating background script...${NC}"
     mkdir -p ~/.config/scripts
     echo -e "#!/bin/sh\n~/.config/scripts/change_wallpapers.sh ~/.wallpapers/default.jpg" > ~/.bg
     chmod +x ~/.bg
-    log "${GREEN}  ✓ Background script created${NC}"
+    log "${GREEN}✓ Background script created${NC}"
     
-    log "${BLUE}  • Creating first-run wallpaper setup...${NC}"
+    log "${CYAN}• Creating first-run wallpaper setup...${NC}"
     cat > ~/.config/i3/autostart_once.sh << 'EOF'
 #!/bin/bash
 [ -f ~/.wallpapers/default.jpg ] && ~/.config/scripts/change_wallpaper.sh ~/.wallpapers/default.jpg
@@ -307,7 +305,7 @@ pywalfox update
 EOF
     chmod +x ~/.config/i3/autostart_once.sh
     echo "exec_always --no-startup-id ~/.config/i3/autostart_once.sh" >> ~/.config/i3/config
-    log "${GREEN}  ✓ First-run setup configured${NC}"
+    log "${GREEN}✓ First-run setup configured${NC}"
 }
 
 # ============================================================================
@@ -315,30 +313,23 @@ EOF
 # ============================================================================
 
 main() {
-    # 1. Clear screen is at the very top of file
-    
-    # 2. Check root
     if [ "$EUID" -eq 0 ]; then
         echo -e "${RED}Error: Do not run this script as root. Use a regular user with sudo privileges.${NC}"
         exit 1
     fi
 
-    # 3. Show Banner BEFORE sudo prompt
     show_banner
 
-    # 4. Init Log & Sudo Prompt
-    # This is where the password will be asked
+    # Sudo prompt happens here
     sudo touch "${LOGFILE}" && sudo chmod 666 "${LOGFILE}"
     > "${TEMP_PKGS}"
     
-    # 5. Start Process
     configure_hardware
     initial_setup
     install_packages_from_file
     run_scripts
     finalize
     
-    # 6. Cleanup & End
     rm -f "${TEMP_PKGS}"
     
     echo ""
