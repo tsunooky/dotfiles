@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# Robust Arch Linux Dotfiles Installation Script
-# Exit on any error, log everything
-
-# Clear screen immediately
 clear
-
 set -euo pipefail
 
 # ============================================================================
@@ -20,8 +15,8 @@ SEP_MAIN="═══════════════════════�
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-BLUE='\033[0;34m'   # Arch Blue (Darker)
-CYAN='\033[0;36m'   # Arch Cyan (Lighter)
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -43,7 +38,6 @@ log_main_title() {
 }
 
 log_group_title() {
-    # Blue for groups (inverted from previous cyan)
     log "${BOLD}${BLUE}──── $1 ────${NC}"
 }
 
@@ -159,7 +153,7 @@ install_group() {
         [[ -z "${pkg}" || "${pkg}" =~ ^# ]] && continue
         install_package "${pkg}" "pacman"
     done
-    echo "" # Empty line after group
+    echo ""
 }
 
 # ============================================================================
@@ -189,9 +183,10 @@ initial_setup() {
     install_package "sed"
     install_package "xorg-xrandr"
 
-    log "${CYAN}• Configuring Pacman with 'ILoveCandy' option...${NC}"
+    log "${CYAN}• Configuring Pacman (Candy & Parallel Downloads)...${NC}"
     sudo sed -i '/ILoveCandy/d' /etc/pacman.conf
     sudo sed -i '/^\[options\]/a ILoveCandy' /etc/pacman.conf
+    sudo sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 }
 
 install_packages_from_file() {
@@ -320,7 +315,6 @@ main() {
 
     show_banner
 
-    # Sudo prompt happens here
     sudo touch "${LOGFILE}" && sudo chmod 666 "${LOGFILE}"
     > "${TEMP_PKGS}"
     
