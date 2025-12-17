@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 if ! command -v zsh &> /dev/null; then
@@ -6,9 +6,7 @@ if ! command -v zsh &> /dev/null; then
     exit 1
 fi
 
-if [ "$SHELL" != "$(which zsh)" ]; then
-    echo "Changing shell to zsh for user $USER..."
-    sudo chsh -s "$(which zsh)" "$USER"
-else
-    echo "Shell is already zsh."
-fi
+REAL_USER=${SUDO_USER:-$USER}
+sudo usermod --shell /usr/bin/zsh "$REAL_USER"
+exit 0
+
