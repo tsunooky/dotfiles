@@ -320,9 +320,9 @@ main() {
     sudo touch "${LOGFILE}" && sudo chmod 666 "${LOGFILE}"
     > "${TEMP_PKGS}"
 
-    configure_hardware
     initial_setup
     install_packages_from_file
+    configure_hardware
     run_scripts
     finalize
 
