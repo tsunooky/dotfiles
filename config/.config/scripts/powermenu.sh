@@ -4,8 +4,8 @@
 theme="$HOME/.config/rofi/powermenu.rasi"
 
 # CMDs
-uptime="Up: $(uptime -p | sed -e 's/up //g')"
-host="  $USER"
+uptime="$(uptime -p | sed -e 's/up //g')"
+host=" $USER"
 
 # Options
 shutdown='  Shutdown'
