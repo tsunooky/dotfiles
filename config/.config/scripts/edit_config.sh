@@ -15,7 +15,7 @@ show_menu() {
         exit 1
     fi
 
-    choice=$(echo -e "$options" | rofi -dmenu -i -p "   Edit Config:" -dpi 1 -theme "$HOME/.config/rofi/edit_config.rasi")
+    choice=$(echo -e "$options" | rofi -dmenu -i -p " " -dpi 1 -theme "$HOME/.config/rofi/edit_config.rasi")
 
     if [[ -n "$choice" ]]; then
         file_to_edit=$(grep "^${choice}${DELIM}" "$CONFIG_LIST" | awk -F "$DELIM" '{print $2}')

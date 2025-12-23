@@ -48,7 +48,7 @@ mainbox {
 /*****----- Inputbar -----*****/
 inputbar {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     3px;
     margin:                      0px;
     padding:                     15px;
     border:                      0px solid;
@@ -76,7 +76,7 @@ entry {
     background-color:            inherit;
     text-color:                  inherit;
     cursor:                      text;
-    placeholder:                 "...";
+    placeholder:                 "Edit...";
     placeholder-color:           inherit;
 }
 

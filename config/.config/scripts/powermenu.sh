@@ -4,23 +4,23 @@
 theme="$HOME/.config/rofi/powermenu.rasi"
 
 # CMDs
-uptime="`uptime -p | sed -e 's/up //g'`"
-host=`hostname`
+uptime="Up: $(uptime -p | sed -e 's/up //g')"
+host="  $(hostname)"
 
 # Options
-shutdown='   Shutdown'
-reboot='   Reboot'
-lock='   Lock'
-suspend='   Suspend'
-logout='   Logout'
-yes='   Yes'
-no='   No'
+shutdown='  Shutdown'
+reboot='  Reboot'
+lock='  Lock'
+suspend='  Suspend'
+logout='  Logout'
+yes='  Yes'
+no='  No'
 
 # Rofi CMD
 rofi_cmd() {
     rofi -dmenu -dpi 1 \
         -p "$host" \
-        -mesg "Uptime: $uptime" \
+        -theme-str "textbox-uptime { str: \"$uptime\"; }" \
         -theme ${theme}
 }
 
