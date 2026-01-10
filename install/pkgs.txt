@@ -3,7 +3,9 @@ base-devel
 glibc
 gcc
 make
+autoconf
 autoconf-archive
+lcov
 git
 git-lfs
 
