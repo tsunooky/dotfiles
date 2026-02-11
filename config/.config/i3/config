@@ -63,6 +63,9 @@ bindsym $mod+i exec --no-startup-id sh ~/.config/scripts/lock.sh
 # Start a terminal
 bindsym $mod+Return exec --no-startup-id alacritty
 
+# Start a terminal in the Working directory of the previous one
+bindsym $mod+Shift+Return exec --no-startup-id ~/.config/scripts/double.sh
+
 # Kill focused window
 bindsym $mod+Shift+a kill
 
