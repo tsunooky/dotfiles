@@ -233,6 +233,15 @@ copyname() {
     ) | xsel -b
 }
 
+clipall() {
+  find . -type f -not -path '*/.*' | while read -r file; do
+    echo "$file:"
+    cat "$file"
+    echo -e "\n"
+  done | xsel -b
+  echo "Cliped everything reccursively from ./* !"
+}
+
 # ------
 # CONFIG
 # ------
