@@ -234,12 +234,15 @@ copyname() {
 }
 
 clipall() {
-  find . -type f -not -path '*/.*' | while read -r file; do
-    echo "$file:"
-    cat "$file"
-    echo -e "\n"
-  done | xsel -b
-  echo "Cliped everything reccursively from ./* !"
+    find . -type d -name '.git' -prune -o -type f -print0 | while IFS= read -r -d '' file; do
+        if file "$file" | grep -q "text"; then
+            echo "[$file] :"
+            cat "$file"
+            echo ""
+        fi
+    done | xsel -b
+    
+    echo "Clipped everything recursively from ./* (excluding .git and binaries) !"
 }
 
 # ------
