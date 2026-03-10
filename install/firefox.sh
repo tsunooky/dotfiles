@@ -26,3 +26,5 @@ sudo tee "$POLICIES_DIR/policies.json" > /dev/null <<EOF
   }
 }
 EOF
+
+exit 0
