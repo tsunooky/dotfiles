@@ -14,6 +14,8 @@ POLICIES_DIR="/etc/firefox/policies"
 sudo mkdir -p "$POLICIES_DIR"
 
 echo "Configuring Firefox policies..."
+exit 0
+
 sudo tee "$POLICIES_DIR/policies.json" > /dev/null <<EOF
 {
   "policies": {
