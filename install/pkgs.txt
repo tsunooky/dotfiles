@@ -8,12 +8,14 @@ autoconf-archive
 lcov
 git
 git-lfs
+bear
 
 # System Tools & Utilities
 man-pages
 man-db
 nano
 vim
+nvim
 fuse3
 os-prober
 ntfs-3g
