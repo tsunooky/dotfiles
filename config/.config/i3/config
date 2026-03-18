@@ -51,6 +51,9 @@ font pango:JetBrains Mono 11
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# Focus link window on link opening
+focus_on_window_activation focus
+
 # Changes the wallpaper to a random one inside the ~/.wallpapers folder
 bindsym $mod+Shift+b exec --no-startup-id ~/.config/scripts/random_wallpaper.sh
 
