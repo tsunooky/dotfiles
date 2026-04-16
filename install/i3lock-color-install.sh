@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 if command -v yay &> /dev/null; then
     echo "Installing i3lock-color from AUR..."

@@ -26,9 +26,13 @@ NC='\033[0m'
 # ============================================================================
 
 log() {
-    local msg="[$(date '+%H:%M:%S')] $1"
-    echo -e "$msg" | sudo tee -a "${LOGFILE}" > /dev/null
-    echo -e "$1"
+    local msg="$1"
+    # To stdout: clean for the user (keep colors)
+    echo -e "$msg"
+    # To logfile: add timestamp and strip colors for readability
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo -e "[$timestamp] $msg" | sed 's/\x1b\[[0-9;]*m//g' | sudo tee -a "${LOGFILE}" > /dev/null
 }
 
 log_main_title() {
@@ -43,19 +47,28 @@ log_group_title() {
 }
 
 cleanup_on_error() {
+    local exit_code=$?
+    local line_number=$1
+    local command=$2
+    
     echo ""
     log "${RED}${SEP_MAIN}${NC}"
     log "${RED}✗ INSTALLATION FAILED${NC}"
-    log "${RED}  Error details stored in: ${LOGFILE}${NC}"
+    log "${RED}  Error in line ${line_number}: '${command}' (Exit code: ${exit_code})${NC}"
+    log "${RED}  Full logs available at: ${LOGFILE}${NC}"
     log "${RED}${SEP_MAIN}${NC}"
 
     if [ -f "${TEMP_PKGS}" ]; then
-        echo "Packages installed before failure: $(cat ${TEMP_PKGS})" >> "${LOGFILE}"
+        local pkgs
+        pkgs=$(cat "${TEMP_PKGS}")
+        if [ -n "$pkgs" ]; then
+            log "${YELLOW}  Packages installed in this session: ${pkgs}${NC}"
+        fi
     fi
-    exit 1
+    exit "${exit_code}"
 }
 
-trap cleanup_on_error ERR
+trap 'cleanup_on_error $LINENO "$BASH_COMMAND"' ERR
 
 # ============================================================================
 # VISUALS

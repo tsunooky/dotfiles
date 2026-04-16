@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 FAILED=false
 
@@ -9,7 +10,12 @@ else
     FAILED=true
 fi
 
-sudo pywalfox install || FAILED=true
+if command -v pywalfox &> /dev/null; then
+    sudo pywalfox install || FAILED=true
+else
+    echo "Error: pywalfox is not installed."
+    FAILED=true
+fi
 
 POLICIES_DIR="/etc/firefox/policies"
 sudo mkdir -p "$POLICIES_DIR"

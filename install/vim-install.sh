@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 if ! command -v vim &> /dev/null; then
     sudo pacman -S --noconfirm --needed vim
