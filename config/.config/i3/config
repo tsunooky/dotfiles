@@ -23,7 +23,7 @@ exec_always --no-startup-id autotiling
 exec_always --no-startup-id picom --config ~/.config/picom/picom.conf --xrender-sync-fence
 
 # Launch polybar
-exec_always --no-startup-id "killall -q polybar; polybar main"
+exec_always --no-startup-id "killall -q polybar; ~/.config/scripts/launch_polybar.sh"
 
 # Locks the screen with i3lock after a certain time
 # Use loginctl lock-session to lock your screen
