@@ -82,6 +82,7 @@ sudo mkinitcpio -P
 if [ -f /etc/default/grub ]; then
     if ! grep -q "nvidia-drm.modeset=1" /etc/default/grub; then
         echo "Adding nvidia-drm.modeset=1 to GRUB command line..."
+        # We append it to existing params, ensuring we don't duplicate or mess with others
         sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="nvidia-drm.modeset=1 /' /etc/default/grub
         echo "Updating GRUB configuration to apply kernel parameters..."
         sudo grub-mkconfig -o /boot/grub/grub.cfg

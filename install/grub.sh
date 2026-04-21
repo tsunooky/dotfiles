@@ -30,15 +30,30 @@ if [ -f /etc/default/grub ]; then
     fi
 
     # Timeout and Style
-    echo "Setting GRUB timeout to 5 seconds..."
-    sudo sed -i 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=5/' /etc/default/grub
+    echo "Setting GRUB timeout to 8 seconds..."
+    sudo sed -i 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=8/' /etc/default/grub
     sudo sed -i 's/GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/' /etc/default/grub
     
     if grep -q "GRUB_RECORDFAIL_TIMEOUT" /etc/default/grub; then
-        sudo sed -i 's/GRUB_RECORDFAIL_TIMEOUT=.*/GRUB_RECORDFAIL_TIMEOUT=5/' /etc/default/grub
+        sudo sed -i 's/GRUB_RECORDFAIL_TIMEOUT=.*/GRUB_RECORDFAIL_TIMEOUT=8/' /etc/default/grub
     else
-        echo 'GRUB_RECORDFAIL_TIMEOUT=5' | sudo tee -a /etc/default/grub
+        echo 'GRUB_RECORDFAIL_TIMEOUT=8' | sudo tee -a /etc/default/grub
     fi
+
+    # Kernel Parameters for clean "Pro" boot
+    # loglevel=3 hides non-critical errors, systemd.show_status=true shows the [ OK ] messages
+    echo "Configuring clean boot kernel parameters..."
+    # We remove 'quiet' and add our preferred params
+    sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)quiet\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1\2"/' /etc/default/grub
+    # Ensure loglevel=3 and systemd.show_status=true are present
+    if ! grep -q "loglevel=3" /etc/default/grub; then
+        sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 /' /etc/default/grub
+    fi
+    if ! grep -q "systemd.show_status=true" /etc/default/grub; then
+        sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="systemd.show_status=true /' /etc/default/grub
+    fi
+    # Cleanup double spaces
+    sudo sed -i 's/  */ /g' /etc/default/grub
 
     # Resolution handling
     DETECTOR_RES="1024x768x32"
