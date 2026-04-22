@@ -1,32 +1,23 @@
--- Set leader key to space
+-- Core Options
 vim.g.mapleader = " "
 
--- Use absolute line numbers
+-- Appearance
 vim.opt.number = true
 vim.opt.relativenumber = false
-
--- Highlight only the line number
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
-
--- Show tabs as ▸ and keep spaces invisible
 vim.opt.list = true
 vim.opt.listchars = { tab = "▸ ", space = " " }
-
--- sign column always visible
 vim.opt.signcolumn = "yes"
-
--- Standard indentation settings
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-
--- Enable true color support
 vim.opt.termguicolors = true
 
--- System clipboard integration
-vim.opt.clipboard = "unnamedplus"
+-- Indentation
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
 
--- Disable netrw in favor of neo-tree
+-- System
+vim.opt.clipboard = "unnamedplus"
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
