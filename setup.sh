@@ -112,7 +112,7 @@ configure_hardware() {
             local width=$(echo "$current_res" | cut -d'x' -f1)
 
             if [ "$width" -ge 3000 ]; then detected_dpi="192"; # 4K / Mac
-            elif [ "$width" -ge 2100 ]; then detected_dpi="192"; # 2K
+            elif [ "$width" -ge 2100 ]; then detected_dpi="120"; # 2K
             # elif [ "$width" -ge 2100 ]; then detected_dpi="144"; # 2K
             else detected_dpi="96"; fi # FHD
 
