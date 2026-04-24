@@ -20,6 +20,7 @@ fuse3
 os-prober
 ntfs-3g
 curl
+wget
 sed
 grep
 awk
