@@ -27,7 +27,6 @@ return {
   notifier = {
     enabled = true,
     timeout = 3000,
-    width = { min = 40, max = 0.4 },
   },
   input = { enabled = true },
   select = { enabled = true },
@@ -35,7 +34,23 @@ return {
   -- Visual & Animations
   indent = { 
     enabled = true,
-    scope = { enabled = false },
+    priority = 1,
+    char = "│",
+    only_scope = false, -- affiche toutes les barres d'indentation
+    only_current = false,
+    animate = {
+      enabled = true,
+      style = "out",
+      duration = { step = 20, total = 500 },
+      cursor = true,
+    },
+    scope = {
+      enabled = true, -- active le scope (comme mini.indentscope)
+      priority = 200,
+      char = "│",
+      underline = false,
+      only_current = false,
+    },
   },
   scroll = { 
     enabled = true,

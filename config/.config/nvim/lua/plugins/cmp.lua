@@ -41,9 +41,6 @@ return {
           return vim_item
         end,
       },
-      performance = {
-        max_view_entries = 8,
-      },
       mapping = cmp.mapping.preset.insert({
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then

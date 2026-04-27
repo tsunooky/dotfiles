@@ -51,3 +51,31 @@ vim.api.nvim_create_autocmd("FileType", {
   vim.opt_local.softtabstop = 4
   end,
 })
+
+-- Smart Color Column (Dynamic)
+local function update_smart_column()
+  local ignored = { "help", "text", "markdown", "snacks_dashboard", "dashboard", "lazy", "mason", "notify", "toggleterm" }
+  if vim.tbl_contains(ignored, vim.bo.filetype) or vim.bo.buftype == "terminal" then
+    vim.opt_local.colorcolumn = ""
+    return
+  end
+
+  local limit = 80
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local max_len = 0
+  for _, line in ipairs(lines) do
+    local len = vim.fn.strdisplaywidth(line)
+    if len > max_len then max_len = len end
+  end
+
+  if max_len >= limit then
+    vim.opt_local.colorcolumn = tostring(limit)
+  else
+    vim.opt_local.colorcolumn = ""
+  end
+end
+
+vim.api.nvim_create_autocmd({ "FileType", "BufEnter", "TextChanged", "TextChangedI" }, {
+  pattern = "*",
+  callback = update_smart_column,
+})
