@@ -282,6 +282,9 @@ run_scripts() {
 finalize() {
     log_main_title "Finalizing Setup"
 
+    log "${CYAN}• Cleaning old Neovim configuration...${NC}"
+    rm -rf ~/.config/nvim
+    
     log "${CYAN}• Copying configuration files...${NC}"
     cp -a "${SCRIPT_DIR}/config/." ~/
     log "${GREEN}✓ Configuration files copied${NC}"
