@@ -12,6 +12,14 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 
 echo "--- Starting General GRUB & Dual-Boot Configuration ---"
 
+# --- 0. GRUB Detection ---
+# We check if /etc/default/grub exists and if grub-mkconfig is available.
+# This prevents errors on systems using other bootloaders (like systemd-boot).
+if [ ! -f /etc/default/grub ] || ! command -v grub-mkconfig &> /dev/null; then
+    echo "• GRUB not detected or not used. Skipping GRUB configuration."
+    exit 0
+fi
+
 # --- 1. GRUB Configuration (Timeout, Style & Resolution) ---
 echo "Configuring GRUB defaults..."
 
