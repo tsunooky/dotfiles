@@ -64,7 +64,7 @@ if [ -f /etc/default/grub ]; then
     sudo sed -i 's/  */ /g' /etc/default/grub
 
     # Resolution handling
-    DETECTOR_RES="1024x768x32"
+    DETECTOR_RES="1920x1080x32"
     if command -v xrandr &> /dev/null; then
         CURRENT_RES=$(xrandr | grep '*' | awk '{print $1}' | head -n 1 || true)
         if [ -n "$CURRENT_RES" ]; then
