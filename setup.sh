@@ -253,7 +253,7 @@ run_scripts() {
     fi
 
     # Config Scripts
-    local scripts=("ly.sh" "grub.sh" "nvidia.sh" "firefox.sh" "vim-install.sh" "zsh-install.sh" "wallpapers.sh")
+    local scripts=("grub.sh" "nvidia.sh" "firefox.sh" "vim-install.sh" "zsh-install.sh" "wallpapers.sh")
     for s in "${scripts[@]}"; do
         if [ -f "${SCRIPT_DIR}/install/$s" ]; then
             log "${CYAN}• Configuring $(echo $s | cut -d'-' -f1 | cut -d'.' -f1)...${NC}"
