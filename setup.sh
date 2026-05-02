@@ -313,14 +313,6 @@ finalize() {
     chmod +x ~/.bg
     log "${GREEN}✓ Background script created${NC}"
 
-    # Ensure Ly permissions for Matugen
-    if [ -f /etc/ly/config.ini ]; then
-        log "${CYAN}• Ensuring /etc/ly/config.ini permissions for Matugen...${NC}"
-        sudo chown "$USER:$USER" /etc/ly/config.ini
-        sudo chmod 644 /etc/ly/config.ini
-        log "${GREEN}✓ Ly permissions updated${NC}"
-    fi
-
     if [ "$is_update" = "false" ]; then
         log "${CYAN}• Creating first-run wallpaper setup...${NC}"
         cat > ~/.config/i3/autostart_once.sh << 'EOF'
