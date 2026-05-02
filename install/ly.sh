@@ -35,10 +35,11 @@ sudo chmod 644 /etc/ly/config.ini
 echo "Creating /etc/systemd/system/ly.service from template..."
 
 if [ -f /usr/lib/systemd/system/ly@.service ]; then
-    # Copy the template, replace %i/%I with tty2, and add the Alias
+    # Copy the template, replace %i/%I with tty2, and add the Alias and ExecStartPre
     cat /usr/lib/systemd/system/ly@.service | \
         sed 's/%i/tty2/g' | \
         sed 's/%I/tty2/g' | \
+        sed '/ExecStart=/i ExecStartPre=-/home/adrien/.config/scripts/ly-colors.sh' | \
         sed '/\[Install\]/a Alias=display-manager.service' | \
         sudo tee /etc/systemd/system/ly.service > /dev/null
 else
@@ -52,6 +53,7 @@ Conflicts=getty@tty2.service
 
 [Service]
 Type=idle
+ExecStartPre=-/home/adrien/.config/scripts/ly-colors.sh
 ExecStart=/usr/bin/ly-dm
 StandardInput=tty
 TTYPath=/dev/tty2
