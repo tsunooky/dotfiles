@@ -282,6 +282,11 @@ run_scripts() {
 finalize() {
     log_main_title "Finalizing Setup"
 
+    local is_update=false
+    if [ -f "$HOME/.config/scripts/matugen-reload.sh" ]; then
+        is_update=true
+    fi
+
     log "${CYAN}• Cleaning old Neovim configuration...${NC}"
     rm -rf ~/.config/nvim
     
@@ -309,8 +314,9 @@ finalize() {
     chmod +x ~/.bg
     log "${GREEN}✓ Background script created${NC}"
 
-    log "${CYAN}• Creating first-run wallpaper setup...${NC}"
-    cat > ~/.config/i3/autostart_once.sh << 'EOF'
+    if [ "$is_update" = "false" ]; then
+        log "${CYAN}• Creating first-run wallpaper setup...${NC}"
+        cat > ~/.config/i3/autostart_once.sh << 'EOF'
 #!/bin/bash
 [ -f ~/.wallpapers/default.jpg ] && ~/.config/scripts/change_wallpaper.sh ~/.wallpapers/default.jpg
 sed -i '/exec.*autostart_once\.sh/d' ~/.config/i3/config
@@ -318,9 +324,12 @@ rm -f ~/.config/i3/autostart_once.sh
 i3-msg restart
 pywalfox update
 EOF
-    chmod +x ~/.config/i3/autostart_once.sh
-    echo "exec_always --no-startup-id ~/.config/i3/autostart_once.sh" >> ~/.config/i3/config
-    log "${GREEN}✓ First-run setup configured${NC}"
+        chmod +x ~/.config/i3/autostart_once.sh
+        echo "exec_always --no-startup-id ~/.config/i3/autostart_once.sh" >> ~/.config/i3/config
+        log "${GREEN}✓ First-run setup configured${NC}"
+    else
+        log "${CYAN}• Update detected, skipping first-run wallpaper setup.${NC}"
+    fi
 }
 
 # ============================================================================
