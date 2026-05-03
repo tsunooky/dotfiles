@@ -39,6 +39,7 @@ universal-ctags
 xorg-server
 xorg-xinit
 xorg-xrandr
+xorg-xauth
 
 # Audio System (Pipewire)
 pipewire
