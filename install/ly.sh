@@ -23,6 +23,15 @@ if systemctl is-enabled "getty@tty2.service" &>/dev/null; then
     sudo systemctl disable "getty@tty2.service"
 fi
 
+# 2. Configure battery_id for laptops
+if [ -f /etc/ly/config.ini ]; then
+    BATTERY=$(ls /sys/class/power_supply/ | grep BAT | head -n 1 || true)
+    if [ -n "$BATTERY" ]; then
+        echo "Laptop detected, setting Ly battery_id to $BATTERY..."
+        sudo sed -i "s/^#*battery_id = .*/battery_id = $BATTERY/" /etc/ly/config.ini
+    fi
+fi
+
 # 3. Enable Ly on TTY2
 echo "Enabling ly@tty2.service..."
 sudo systemctl enable ly@tty2.service
