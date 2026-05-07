@@ -235,12 +235,10 @@ run_scripts() {
     fi
 
     # i3lock-color
-    if ! command -v i3lock &>/dev/null; then
-        log "${CYAN}• Building i3lock-color from source...${NC}"
-        [ -f "${SCRIPT_DIR}/install/i3lock-color-install.sh" ] && bash "${SCRIPT_DIR}/install/i3lock-color-install.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}✓ i3lock-color installed${NC}"
-    else
-        log "${CYAN}• i3lock-color already installed, skipping rebuild.${NC}"
+    log "${CYAN}• Checking/Installing i3lock-color...${NC}"
+    if [ -f "${SCRIPT_DIR}/install/i3lock-color-install.sh" ]; then
+        bash "${SCRIPT_DIR}/install/i3lock-color-install.sh" >> "${LOGFILE}" 2>&1
+        log "${GREEN}✓ i3lock-color checked${NC}"
     fi
 
     # Config Scripts
@@ -263,10 +261,11 @@ run_scripts() {
 
     # Matugen
     if command -v yay &>/dev/null; then
-        log "${CYAN}• Installing matugen-bin...${NC}"
-        install_package "matugen-bin" "yay"
+        log "${CYAN}• Checking/Updating matugen-bin...${NC}"
+        yay -S --noconfirm --needed --answerdiff None --answerclean None matugen-bin >> "${LOGFILE}" 2>&1
+        log "${GREEN}✓ matugen-bin checked${NC}"
     else
-        log "${YELLOW}⚠ yay not found, skipping matugen-bin installation.${NC}"
+        log "${YELLOW}⚠ yay not found, skipping matugen-bin.${NC}"
     fi
 }
 
