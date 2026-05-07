@@ -77,9 +77,17 @@ if [ "${SHOULD_GRUB:-0}" -eq 1 ]; then
     # Default configuration
     [ ! -f /etc/default/grub ] && { [ -f /usr/share/grub/default/grub ] && sudo cp /usr/share/grub/default/grub /etc/default/grub || sudo touch /etc/default/grub; }
     
-    sudo sed -i '/GRUB_DISABLE_OS_PROBER/d' /etc/default/grub
-    echo 'GRUB_DISABLE_OS_PROBER=false' | sudo tee -a /etc/default/grub
-    sudo sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=8/' /etc/default/grub
+    # Ensure settings are present and correct (idempotent)
+    update_grub_config() {
+        local var=$1
+        local val=$2
+        sudo sed -i "/^#\?${var}=/d" /etc/default/grub
+        echo "${var}=${val}" | sudo tee -a /etc/default/grub
+    }
+
+    update_grub_config "GRUB_DISABLE_OS_PROBER" "false"
+    update_grub_config "GRUB_DISABLE_SUBMENU" "y"
+    update_grub_config "GRUB_TIMEOUT" "8"
 
     # Theme Installation
     THEME="grub-theme-vimix-very-dark-blue"

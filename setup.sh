@@ -111,10 +111,10 @@ configure_hardware() {
         if [ -n "$current_res" ]; then
             local width=$(echo "$current_res" | cut -d'x' -f1)
 
-            if [ "$width" -ge 3000 ]; then detected_dpi="192"; # 4K / Mac
+            if [ "$width" -ge 3000 ]; then detected_dpi="192"; # 4K or high-res
+            elif [ "$width" -ge 2500 ]; then detected_dpi="132"; # QHD
             elif [ "$width" -ge 2100 ]; then detected_dpi="120"; # 2K
-            # elif [ "$width" -ge 2100 ]; then detected_dpi="144"; # 2K
-            else detected_dpi="96"; fi # FHD
+            else detected_dpi="96"; fi # FHD (1920) or lower
 
             log "${GREEN}✓ Resolution: ${current_res} -> DPI set to ${detected_dpi}${NC}"
         else
@@ -124,17 +124,8 @@ configure_hardware() {
         log "${YELLOW}⚠ xrandr missing, defaulting to 96 DPI${NC}"
     fi
 
-    if [ -f "${SCRIPT_DIR}/config/.config/polybar/config.ini" ]; then
-        sed -i "s/{{DPI}}/${detected_dpi}/g" "${SCRIPT_DIR}/config/.config/polybar/config.ini"
-    fi
-
-    echo "Xft.dpi: ${detected_dpi}
-Xft.autohint: 0
-Xft.lcdfilter: lcddefault
-Xft.hintstyle: hintfull
-Xft.hinting: 1
-Xft.antialias: 1
-Xft.rgba: rgb" > "${SCRIPT_DIR}/config/.Xresources"
+    export DETECTED_DPI="${detected_dpi}"
+    echo "DETECTED_DPI=${detected_dpi}" >> /tmp/dotfiles-user-prefs.conf
 }
 
 # ============================================================================
@@ -293,6 +284,21 @@ finalize() {
     log "${CYAN}• Copying configuration files...${NC}"
     cp -a "${SCRIPT_DIR}/config/." ~/
     log "${GREEN}✓ Configuration files copied${NC}"
+
+    log "${CYAN}• Applying hardware-specific configurations...${NC}"
+    # Apply DPI to polybar
+    if [ -f ~/.config/polybar/config.ini ]; then
+        sed -i "s/{{DPI}}/${DETECTED_DPI:-96}/g" ~/.config/polybar/config.ini
+    fi
+
+    # Create .Xresources
+    echo "Xft.dpi: ${DETECTED_DPI:-96}
+Xft.autohint: 0
+Xft.lcdfilter: lcddefault
+Xft.hintstyle: hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb" > ~/.Xresources
 
     log "${CYAN}• Enabling system services...${NC}"
     sudo systemctl enable NetworkManager 2>/dev/null || true
