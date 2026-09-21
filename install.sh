@@ -20,7 +20,7 @@ echo -e "${BLUE}Cloning dotfiles repository...${NC}"
 # Check if git is installed
 if ! command -v git &>/dev/null; then
     echo -e "${BLUE}Git not found. Installing git...${NC}"
-    sudo pacman -Sy --noconfirm git
+    sudo pacman -Syu --noconfirm --needed git
 fi
 
 # Clone repository

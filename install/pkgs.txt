@@ -15,7 +15,7 @@ man-pages
 man-db
 nano
 vim
-nvim
+neovim
 fuse3
 os-prober
 ntfs-3g

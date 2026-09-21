@@ -105,23 +105,35 @@ configure_hardware() {
     echo "INSTALL_LAPTOP=${install_laptop}" > /tmp/dotfiles-user-prefs.conf
 
     local detected_dpi="96"
+    local current_res=""
 
-    if command -v xrandr >/dev/null 2>&1; then
-        local current_res=$(xrandr 2>/dev/null | grep '*' | awk '{print $1}' | head -n 1)
-        if [ -n "$current_res" ]; then
-            local width=$(echo "$current_res" | cut -d'x' -f1)
+    # Inside X (update run from i3): ask xrandr for the active mode
+    if [ -n "${DISPLAY:-}" ] && command -v xrandr >/dev/null 2>&1; then
+        current_res=$(xrandr 2>/dev/null | grep '\*' | awk '{print $1}' | head -n 1)
+    fi
 
-            if [ "$width" -ge 3000 ]; then detected_dpi="192"; # 4K or high-res
-            elif [ "$width" -ge 2500 ]; then detected_dpi="132"; # QHD
-            elif [ "$width" -ge 2100 ]; then detected_dpi="120"; # 2K
-            else detected_dpi="96"; fi # FHD (1920) or lower
+    # Fresh install runs from a TTY with no X server: take the preferred mode
+    # (first line of "modes") of the first connected output from the DRM sysfs.
+    if [ -z "$current_res" ]; then
+        local status
+        for status in /sys/class/drm/card*-*/status; do
+            [ -f "$status" ] && [ "$(cat "$status")" = "connected" ] || continue
+            current_res=$(head -n 1 "$(dirname "$status")/modes" 2>/dev/null)
+            [ -n "$current_res" ] && break
+        done
+    fi
 
-            log "${GREEN}✓ Resolution: ${current_res} -> DPI set to ${detected_dpi}${NC}"
-        else
-            log "${YELLOW}⚠ No active resolution found, defaulting to 96 DPI${NC}"
-        fi
+    if [ -n "$current_res" ]; then
+        local width=$(echo "$current_res" | cut -d'x' -f1)
+
+        if [ "$width" -ge 3000 ]; then detected_dpi="192"; # 4K or high-res
+        elif [ "$width" -ge 2500 ]; then detected_dpi="132"; # QHD
+        elif [ "$width" -ge 2100 ]; then detected_dpi="120"; # 2K
+        else detected_dpi="96"; fi # FHD (1920) or lower
+
+        log "${GREEN}✓ Resolution: ${current_res} -> DPI set to ${detected_dpi}${NC}"
     else
-        log "${YELLOW}⚠ xrandr missing, defaulting to 96 DPI${NC}"
+        log "${YELLOW}⚠ No connected display found, defaulting to 96 DPI${NC}"
     fi
 
     export DETECTED_DPI="${detected_dpi}"
@@ -136,9 +148,8 @@ install_package() {
     local pkg="$1"
     local manager="${2:-pacman}"
 
-    if pacman -Qi "$pkg" &>/dev/null || (command -v yay &>/dev/null && yay -Qi "$pkg" &>/dev/null); then
+    if pacman -Qi "$pkg" &>/dev/null; then
         log "${CYAN}• ${pkg} (already installed)${NC}"
-        echo "• ${pkg} already installed" >> "${LOGFILE}"
         return 0
     fi
 
@@ -152,13 +163,30 @@ install_package() {
     log "${GREEN}✓ Installed: ${pkg}${NC}"
 }
 
+# Installs a whole group in a single pacman transaction: every transaction
+# re-runs the pacman hooks (fc-cache, icon caches, mkinitcpio...), so one
+# per group instead of one per package saves minutes on a fresh install.
 install_group() {
     log_group_title "$1"
     shift
+    local pkg missing=()
     for pkg in "$@"; do
         [[ -z "${pkg}" || "${pkg}" =~ ^# ]] && continue
-        install_package "${pkg}" "pacman"
+        if pacman -Qi "${pkg}" &>/dev/null; then
+            log "${CYAN}• ${pkg} (already installed)${NC}"
+        else
+            missing+=("${pkg}")
+        fi
     done
+
+    if [ "${#missing[@]}" -gt 0 ]; then
+        log "${CYAN}• Installing ${#missing[@]} package(s): ${missing[*]}${NC}"
+        sudo pacman -S --noconfirm --needed "${missing[@]}" >> "${LOGFILE}" 2>&1
+        printf '%s\n' "${missing[@]}" >> "${TEMP_PKGS}"
+        for pkg in "${missing[@]}"; do
+            log "${GREEN}✓ Installed: ${pkg}${NC}"
+        done
+    fi
     echo ""
 }
 
@@ -192,6 +220,11 @@ initial_setup() {
     sudo sed -i '/ILoveCandy/d' /etc/pacman.conf
     sudo sed -i '/^\[options\]/a ILoveCandy' /etc/pacman.conf
     sudo sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+
+    # makepkg defaults to a single job: AUR builds (i3lock-color...) use every core
+    log "${CYAN}• Configuring makepkg (parallel builds)...${NC}"
+    sudo mkdir -p /etc/makepkg.conf.d
+    echo 'MAKEFLAGS="-j$(nproc)"' | sudo tee /etc/makepkg.conf.d/parallel.conf > /dev/null
 }
 
 install_packages_from_file() {
@@ -307,14 +340,13 @@ Xft.rgba: rgb" > ~/.Xresources
     systemctl --user enable pipewire-pulse wireplumber 2>/dev/null || true
     log "${GREEN}✓ Services enabled (Network, Bluetooth, Audio, Login)${NC}"
 
-    log "${CYAN}• Setting GTK theme and updating font cache...${NC}"
-    export GTK_THEME="Adwaita:dark"
+    log "${CYAN}• Updating font cache...${NC}"
     fc-cache -f >/dev/null 2>&1
-    log "${GREEN}✓ GTK theme set, font cache updated${NC}"
+    log "${GREEN}✓ Font cache updated${NC}"
 
     log "${CYAN}• Creating background script...${NC}"
     mkdir -p ~/.config/scripts
-    echo -e "#!/bin/sh\n~/.config/scripts/change_wallpapers.sh ~/.wallpapers/default.jpg" > ~/.bg
+    echo -e "#!/bin/sh\n~/.config/scripts/change_wallpaper.sh ~/.wallpapers/default.jpg" > ~/.bg
     chmod +x ~/.bg
     log "${GREEN}✓ Background script created${NC}"
 
