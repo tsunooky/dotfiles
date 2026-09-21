@@ -106,10 +106,10 @@ setup_nvidia() {
             esac
         done
         repo_pkgs+=("nvidia-utils" "lib32-nvidia-utils" "nvidia-settings")
-        branch_re='^(lib32-)?(opencl-)?nvidia(-open(-lts|-dkms)?|-utils|-settings)?$'
+        branch_re='^((lib32-)?(opencl-)?nvidia(-open(-lts|-dkms)?|-utils|-settings)?|libxnvctrl)$'
     else
         aur_pkgs=("nvidia-${branch}-utils" "nvidia-${branch}-dkms" "lib32-nvidia-${branch}-utils" "nvidia-${branch}-settings")
-        branch_re="^(lib32-)?(opencl-)?nvidia-${branch}"
+        branch_re="^((lib32-)?(opencl-)?nvidia-${branch}|libxnvctrl-${branch})"
     fi
 
     # Kernel configuration, done before installing so the package hooks build
@@ -136,9 +136,10 @@ setup_nvidia() {
 
     # Remove packages from another branch: pacman/yay cannot resolve the
     # resulting conflicts non-interactively (the loaded module keeps working
-    # until reboot).
+    # until reboot). libxnvctrl is the nvidia-settings dependency: each branch
+    # ships its own and they conflict, so it must go too.
     local -a installed other_branch
-    mapfile -t installed < <(pacman -Qq | grep -E '^(lib32-)?(opencl-)?nvidia' | grep -vE '^linux-firmware-nvidia$' || true)
+    mapfile -t installed < <(pacman -Qq | grep -E '^((lib32-)?(opencl-)?nvidia|libxnvctrl)' | grep -vE '^linux-firmware-nvidia$' || true)
     other_branch=()
     local p
     for p in "${installed[@]}"; do
