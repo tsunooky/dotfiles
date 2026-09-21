@@ -270,7 +270,7 @@ alias todo="~/.config/scripts/todo"
 
 # Config alias
 alias conf="~/.config/scripts/edit_config.sh"
-alias update-conf="curl -L conf.dserv.fr | sh"
+alias update-conf="curl -fsSL https://raw.githubusercontent.com/tsunooky/dotfiles/main/install.sh | sh"
 
 # ----- Prompt init with starship -----
 eval "$(starship init zsh)"

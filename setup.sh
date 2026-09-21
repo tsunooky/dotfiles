@@ -10,6 +10,8 @@ set -euo pipefail
 LOGFILE="/var/log/dotfiles-install.log"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMP_PKGS="/tmp/dotfiles-installed-pkgs.txt"
+INSTALL_LAPTOP="no"   # set by configure_hardware
+DETECTED_DPI="96"     # set by configure_hardware
 SEP_MAIN="════════════════════════════════════════════════════════════"
 
 # Colors
@@ -32,7 +34,7 @@ log() {
     # To logfile: add timestamp and strip colors for readability
     local timestamp
     timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo -e "[$timestamp] $msg" | sed 's/\x1b\[[0-9;]*m//g' | sudo tee -a "${LOGFILE}" > /dev/null
+    echo -e "[$timestamp] $msg" | sed 's/\x1b\[[0-9;]*m//g' >> "${LOGFILE}" 2>/dev/null || true
 }
 
 log_main_title() {
@@ -70,6 +72,21 @@ cleanup_on_error() {
 
 trap 'cleanup_on_error $LINENO "$BASH_COMMAND"' ERR
 
+# Ask for the password once, then refresh the sudo ticket in the background so
+# it never expires during long steps (DKMS builds, AUR compilations...).
+# Note: makepkg -s/-i deliberately runs "sudo -k" and always re-prompts, so no
+# install script may use them (yay-install.sh installs with pacman -U instead).
+SUDO_KEEPALIVE_PID=""
+start_sudo_keepalive() {
+    sudo -v
+    ( while true; do sleep 60; sudo -n true; kill -0 "$$" 2>/dev/null || exit; done ) 2>/dev/null &
+    SUDO_KEEPALIVE_PID=$!
+}
+stop_sudo_keepalive() {
+    [ -n "${SUDO_KEEPALIVE_PID}" ] && kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null || true
+}
+trap stop_sudo_keepalive EXIT
+
 # ============================================================================
 # VISUALS
 # ============================================================================
@@ -101,8 +118,7 @@ configure_hardware() {
         log "${CYAN}• Desktop detected (No battery)${NC}"
     fi
 
-    export USER_PREF_INSTALL_LAPTOP="${install_laptop}"
-    echo "INSTALL_LAPTOP=${install_laptop}" > /tmp/dotfiles-user-prefs.conf
+    INSTALL_LAPTOP="${install_laptop}"
 
     local detected_dpi="96"
     local current_res=""
@@ -136,8 +152,7 @@ configure_hardware() {
         log "${YELLOW}⚠ No connected display found, defaulting to 96 DPI${NC}"
     fi
 
-    export DETECTED_DPI="${detected_dpi}"
-    echo "DETECTED_DPI=${detected_dpi}" >> /tmp/dotfiles-user-prefs.conf
+    DETECTED_DPI="${detected_dpi}"
 }
 
 # ============================================================================
@@ -211,10 +226,9 @@ initial_setup() {
         log "${YELLOW}⚠ Failed to enable rfkill-unblock@all (service may not exist)${NC}"
     fi
 
-    log "${CYAN}• Installing essential tools (archlinux-keyring, sed, xorg-xrandr)...${NC}"
+    log "${CYAN}• Installing essential tools (archlinux-keyring, sed)...${NC}"
     install_package "archlinux-keyring"
     install_package "sed"
-    install_package "xorg-xrandr"
 
     log "${CYAN}• Configuring Pacman (Candy & Parallel Downloads)...${NC}"
     sudo sed -i '/ILoveCandy/d' /etc/pacman.conf
@@ -232,64 +246,65 @@ install_packages_from_file() {
     local pkgs_file="${SCRIPT_DIR}/install/pkgs.txt"
     [ ! -f "${pkgs_file}" ] && return 1
 
-    local current_group=""
+    # A "# Group Name" line starts a group; groups are installed in file order.
+    local current_group="" grp
     local -A groups
+    local -a order=()
 
     while IFS= read -r line || [ -n "$line" ]; do
         [[ -z "${line}" ]] && continue
         if [[ "${line}" =~ ^#[[:space:]](.+)$ ]]; then
             current_group="${BASH_REMATCH[1]}"
             groups["${current_group}"]=""
+            order+=("${current_group}")
             continue
         fi
         [[ "${line}" =~ ^# ]] && continue
         [ -n "${current_group}" ] && groups["${current_group}"]+="${line} "
     done < "${pkgs_file}"
 
-    local order=("Base Development Tools" "System Tools & Utilities" "Xorg Display Server" 
-                 "Audio System (Pipewire)" "Network Management" "i3 Window Manager & Compositor" 
-                 "Desktop Utilities" "Fonts & Themes" "Applications")
-
     for grp in "${order[@]}"; do
         [ -n "${groups[$grp]:-}" ] && install_group "$grp" ${groups[$grp]}
     done
 }
 
+# run_install_script <script> <label> [long]
+# Runs install/<script> with its output in the log file. "long" adds a hint so
+# a multi-minute step (DKMS build, AUR compilation) does not look frozen.
+run_install_script() {
+    local script="$1" label="$2" long="${3:-}"
+    if [ ! -f "${SCRIPT_DIR}/install/${script}" ]; then
+        log "${YELLOW}⚠ install/${script} not found, skipping ${label}${NC}"
+        return 0
+    fi
+    if [ -n "$long" ]; then
+        log "${CYAN}• ${label}... (can take several minutes: tail -f ${LOGFILE})${NC}"
+    else
+        log "${CYAN}• ${label}...${NC}"
+    fi
+    bash "${SCRIPT_DIR}/install/${script}" >> "${LOGFILE}" 2>&1
+    log "${GREEN}✓ ${label} done${NC}"
+}
+
 run_scripts() {
     log_main_title "Additional Components"
 
-    # Yay
-    if ! command -v yay &>/dev/null; then
-        log "${CYAN}• Installing yay (AUR helper)...${NC}"
-        [ -f "${SCRIPT_DIR}/install/yay-install.sh" ] && bash "${SCRIPT_DIR}/install/yay-install.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}✓ yay installed${NC}"
-    else
+    if command -v yay &>/dev/null; then
         log "${CYAN}• yay already installed, skipping.${NC}"
+    else
+        run_install_script "yay-install.sh" "Installing yay (AUR helper)"
     fi
 
-    # i3lock-color
-    log "${CYAN}• Checking/Installing i3lock-color...${NC}"
-    if [ -f "${SCRIPT_DIR}/install/i3lock-color-install.sh" ]; then
-        bash "${SCRIPT_DIR}/install/i3lock-color-install.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}✓ i3lock-color checked${NC}"
-    fi
+    run_install_script "i3lock-color-install.sh" "Checking/Installing i3lock-color" long
+    run_install_script "ly.sh" "Configuring ly"
+    run_install_script "grub.sh" "Configuring grub"
+    run_install_script "gpu.sh" "Configuring GPU drivers" long
+    run_install_script "firefox.sh" "Configuring firefox"
+    run_install_script "zsh-install.sh" "Configuring zsh"
+    run_install_script "wallpapers.sh" "Downloading wallpapers"
 
-    # Config Scripts
-    local scripts=("ly.sh" "grub.sh" "gpu.sh" "firefox.sh" "vim-install.sh" "zsh-install.sh" "wallpapers.sh")
-    for s in "${scripts[@]}"; do
-        if [ -f "${SCRIPT_DIR}/install/$s" ]; then
-            log "${CYAN}• Configuring $(echo $s | cut -d'-' -f1 | cut -d'.' -f1)...${NC}"
-            bash "${SCRIPT_DIR}/install/$s" >> "${LOGFILE}" 2>&1
-            log "${GREEN}✓ $(echo $s | cut -d'-' -f1 | cut -d'.' -f1) configured${NC}"
-        fi
-    done
-
-    # Laptop
-    source /tmp/dotfiles-user-prefs.conf
-    if [[ "${INSTALL_LAPTOP}" == "yes" ]] && [ -f "${SCRIPT_DIR}/install/laptop.sh" ]; then
-        log "${CYAN}• Applying laptop optimizations (TLP, acpid)...${NC}"
-        bash "${SCRIPT_DIR}/install/laptop.sh" >> "${LOGFILE}" 2>&1
-        log "${GREEN}✓ Laptop optimizations applied${NC}"
+    if [[ "${INSTALL_LAPTOP}" == "yes" ]]; then
+        run_install_script "laptop.sh" "Applying laptop optimizations (TLP, acpid)"
     fi
 
     # Matugen
@@ -332,23 +347,19 @@ Xft.hinting: 1
 Xft.antialias: 1
 Xft.rgba: rgb" > ~/.Xresources
 
+    # Only Downloads: no xdg-user-dirs, which would also create Music, Documents...
+    mkdir -p ~/Downloads
+
     log "${CYAN}• Enabling system services...${NC}"
     sudo systemctl enable NetworkManager 2>/dev/null || true
-
     sudo systemctl enable --now bluetooth.service 2>/dev/null || true
-
+    # Already enabled by the package presets on Arch; harmless, kept for other setups
     systemctl --user enable pipewire-pulse wireplumber 2>/dev/null || true
-    log "${GREEN}✓ Services enabled (Network, Bluetooth, Audio, Login)${NC}"
+    log "${GREEN}✓ Services enabled (Network, Bluetooth, Audio)${NC}"
 
     log "${CYAN}• Updating font cache...${NC}"
     fc-cache -f >/dev/null 2>&1
     log "${GREEN}✓ Font cache updated${NC}"
-
-    log "${CYAN}• Creating background script...${NC}"
-    mkdir -p ~/.config/scripts
-    echo -e "#!/bin/sh\n~/.config/scripts/change_wallpaper.sh ~/.wallpapers/default.jpg" > ~/.bg
-    chmod +x ~/.bg
-    log "${GREEN}✓ Background script created${NC}"
 
     if [ "$is_update" = "false" ]; then
         log "${CYAN}• Creating first-run wallpaper setup...${NC}"
@@ -366,6 +377,9 @@ EOF
     else
         log "${CYAN}• Update detected, skipping first-run wallpaper setup.${NC}"
     fi
+
+    # Needs ~/.vimrc, so it must run after the configuration files are copied
+    run_install_script "vim-install.sh" "Installing Vim plugins"
 }
 
 # ============================================================================
@@ -380,7 +394,9 @@ main() {
 
     show_banner
 
-    sudo touch "${LOGFILE}" && sudo chmod 666 "${LOGFILE}"
+    start_sudo_keepalive
+    # Owned by the user so that log() and the sub-scripts can append to it directly
+    sudo touch "${LOGFILE}" && sudo chown "$(id -un)" "${LOGFILE}" && sudo chmod 644 "${LOGFILE}"
     > "${TEMP_PKGS}"
 
     initial_setup

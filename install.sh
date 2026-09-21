@@ -24,7 +24,7 @@ if ! command -v git &>/dev/null; then
 fi
 
 # Clone repository
-if git clone "${REPO_URL}" "${INSTALL_DIR}"; then
+if git clone --depth 1 "${REPO_URL}" "${INSTALL_DIR}"; then
     echo -e "${GREEN}✓ Repository cloned${NC}"
 else
     echo -e "${RED}✗ Failed to clone repository${NC}"
@@ -37,9 +37,12 @@ cd "${INSTALL_DIR}"
 # Make scripts executable
 chmod +x setup.sh install/*.sh
 
-# Run main installation
+# Run main installation. stdin is the curl pipe when run as "curl ... | sh":
+# hand the real terminal to setup.sh so prompts (sudo, vim...) work.
 echo ""
-if bash ./setup.sh; then
+STDIN=/dev/stdin
+( : < /dev/tty ) 2>/dev/null && STDIN=/dev/tty
+if bash ./setup.sh < "${STDIN}"; then
     echo -e "${GREEN}✓ Installation completed${NC}"
 else
     echo -e "${RED}✗ Installation failed${NC}"

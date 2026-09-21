@@ -25,7 +25,11 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 git clone https://aur.archlinux.org/yay-bin.git "$TEMP_DIR/yay-bin"
 cd "$TEMP_DIR/yay-bin"
 
-makepkg -rsi --noconfirm
+# makepkg -s/-i run "sudo -k pacman", which ignores the cached sudo ticket and
+# always re-prompts for the password. yay-bin has no build dependencies, so
+# build only, then install the package ourselves (pacman -U pulls pacman/git).
+makepkg --noconfirm --nodeps
+sudo pacman -U --noconfirm --needed ./yay-bin-*.pkg.tar.zst
 
 # Configure yay
 yay -Y --devel --save
