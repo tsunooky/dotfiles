@@ -57,8 +57,8 @@ run_cmd() {
         elif [[ $1 == '--reboot' ]]; then
             systemctl reboot
         elif [[ $1 == '--suspend' ]]; then
-            mpc -q pause
-            amixer set Master mute
+            playerctl pause 2>/dev/null
+            pactl set-sink-mute @DEFAULT_SINK@ 1
             systemctl suspend
         elif [[ $1 == '--logout' ]]; then
             i3-msg exit

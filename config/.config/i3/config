@@ -45,8 +45,8 @@ default_border pixel 2
 gaps outer 2
 gaps inner 4
 
-# Set i3 font to JetBrains Mono
-font pango:JetBrains Mono 11
+# Set i3 font to JetBrains Mono (only the Nerd Font variant is installed)
+font pango:JetBrainsMono Nerd Font 11
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -60,8 +60,9 @@ bindsym $mod+Shift+b exec --no-startup-id ~/.config/scripts/random_wallpaper.sh
 # Opens rofi wallpaper chooser
 bindsym $mod+Shift+w exec --no-startup-id ~/.config/scripts/bg_chooser.sh
 
-# i3lock with blur
+# i3lock
 bindsym $mod+i exec --no-startup-id sh ~/.config/scripts/lock.sh
+bindsym $mod+l exec --no-startup-id sh ~/.config/scripts/lock.sh
 
 # Start a terminal
 bindsym $mod+Return exec --no-startup-id alacritty
@@ -132,7 +133,7 @@ bindsym $mod+Shift+0 move container to workspace number "10"
 bindsym $mod+Tab workspace next
 
 # Go to previous workspace
-bindsym $mod+Shift+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
 
 # Reload the configuration file
 bindsym $mod+Shift+c reload
@@ -152,7 +153,7 @@ bindsym $mod+Shift+F exec "firefox"
 
 # notebook
 bindsym $mod + n exec --no-startup-id alacritty --class "float_window" -e ~/.config/scripts/note.sh
-for_window [class="float_window"] floating enable, rezise set 800 600, move position center
+for_window [class="float_window"] floating enable, resize set 800 600, move position center
 
 # ---------- Hardware and media controls ----------
 

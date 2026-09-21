@@ -32,29 +32,40 @@ You can access the **wallpaper directory** with `bgdir` and add a picture to the
 
 ## ⌨️ Keybinds (i3)
 
+`$mod` is the **Super** (Windows) key.
+
 ### Window Management
 | Keybind | Action |
 | :--- | :--- |
 | `$mod` + `Enter` | Open Terminal |
-| `$mod` + `Shift` + `Q` | Kill focused window |
+| `$mod` + `Shift` + `Enter` | Open Terminal in the directory of the focused one |
+| `$mod` + `Shift` + `A` | Kill focused window |
 | `$mod` + `D` | Open Application Launcher |
-| `$mod` + `F` | Toggle Fullscreen |
+| `$mod` + `F` / `F11` | Toggle Fullscreen |
 | `$mod` + `Arrow Keys` | Focus window (Left/Down/Up/Right) |
 | `$mod` + `Shift` + `Arrows` | Move window |
+| `$mod` + `Shift` + `Space` | Toggle floating |
+| `$mod` + `Space` | Switch focus between tiling and floating windows |
+| `$mod` + `1..0` | Go to workspace 1..10 |
+| `$mod` + `Shift` + `1..0` | Move window to workspace 1..10 |
 | `$mod` + `TAB` | Go to next workspace |
 | `$mod` + `Shift` + `TAB` | Go to previous workspace |
+| `$mod` + `Shift` + `C` | Reload i3 configuration |
+| `$mod` + `Shift` + `R` | Restart i3 in place |
 
 ### System & Media
 | Keybind | Action |
 | :--- | :--- |
-| `$mod` + `D` | Opens **Application Menu** |
 | `$mod` + `Shift` + `E` | Opens **Power Menu** (Shutdown/Reboot/Logoff/Lock) |
+| `$mod` + `C` | Opens the **Config Editor** menu (`conf`) |
 | `$mod` + `Shift` + `W` | Opens **Wallpaper Chooser** (in the Wallpaper Directory) |
 | `$mod` + `Shift` + `B` | Sets a random wallpaper (from the Wallpaper Directory) |
+| `$mod` + `Shift` + `S` / `Print` | Take a screenshot (**Flameshot**) |
 | `$mod` + `N` | Opens your floating **personal note** |
 | `$mod` + `I` / `$mod` + `L` | Launches i3lock |
 | `$mod` + `B` | Open **Bluetooth Manager** |
 | `$mod` + `Shift` + `F` | Open **Firefox** |
+| `XF86 Audio / Brightness keys` | Volume, mute, play/pause, next/previous, brightness |
 
 ---
 

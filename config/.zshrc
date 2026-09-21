@@ -152,7 +152,7 @@ alias cf="clang-format -i"
 # SQL alias
 alias sqlsetup='~/.config/scripts/setup_sql.sh'
 alias sqlserv='postgres -k "$PGHOST"'
-alias sqlfix='~/.config/scripts/sqlfluff fix'
+alias sqlfix='sqlfluff fix --dialect postgres'
 sqlrun()
 {
     if [ $# -ne 1 ]; then
