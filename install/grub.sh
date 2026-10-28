@@ -11,12 +11,14 @@ is_systemd_boot() {
     return 1
 }
 
+# The ESP is often mounted root-only (archinstall uses fmask=0177,dmask=0077):
+# a plain [ -d ] run as the regular user cannot see inside it, hence sudo test.
 get_efi_dir() {
     for dir in /boot /efi /boot/efi; do
-        mountpoint -q "$dir" && [ -d "$dir/EFI" ] && echo "$dir" && return 0
+        mountpoint -q "$dir" && sudo test -d "$dir/EFI" && echo "$dir" && return 0
     done
     local esp; esp=$(findmnt -no TARGET -t vfat | head -n 1)
-    [ -n "$esp" ] && [ -d "$esp/EFI" ] && echo "$esp" && return 0
+    [ -n "$esp" ] && sudo test -d "$esp/EFI" && echo "$esp" && return 0
     return 1
 }
 
@@ -32,7 +34,7 @@ get_root_disk() {
 }
 
 has_windows_files() {
-    [ -f "$1/EFI/Microsoft/Boot/bootmgfw.efi" ] || [ -f "$1/bootmgr" ]
+    sudo test -f "$1/EFI/Microsoft/Boot/bootmgfw.efi" || sudo test -f "$1/bootmgr"
 }
 
 # sbctl reports "installed" once its signing keys exist. Here-strings instead of
