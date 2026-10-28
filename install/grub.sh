@@ -128,11 +128,14 @@ if is_uefi; then
         GRUB_ARGS+=(--no-nvram)
     fi
 
-    # Secure Boot with sbctl keys: when Secure Boot is on, GRUB runs in lockdown
-    # mode and refuses to load modules from disk, so every module grub.cfg needs
-    # (theme, os-prober chainloading, firmware setup entry, 25_bli) is embedded in the
-    # image, shim_lock is disabled (no shim) and the image is signed below.
-    # Without sbctl keys, this is the plain install as before.
+    # Secure Boot with sbctl keys. With Secure Boot on, GRUB runs in lockdown
+    # mode: modules, fonts, kernels and chainloaded images read from disk must
+    # be accepted by a verifier. Without shim (disabled here), that verifier is
+    # the tpm module, so a TPM must stay enabled (Windows 11 requires one
+    # anyway); the firmware then checks the kernel and Windows signatures
+    # against db. The modules grub.cfg uses are embedded as well, so the menu
+    # does not depend on loading them from disk. Without sbctl keys, this is
+    # the plain install as before.
     SBCTL=0
     if has_sbctl_keys; then
         SBCTL=1
@@ -142,8 +145,10 @@ if is_uefi; then
 
     sudo grub-install "${GRUB_ARGS[@]}"
 
-    # -s saves each file in the sbctl database, so its pacman hook re-signs
-    # them on every kernel update. Signing an already signed file is a no-op.
+    # Sign GRUB and the kernels with the sbctl db key (-s records them in the
+    # sbctl database). Kernels are also re-signed on every update by sbctl's
+    # mkinitcpio post hook; sbctl 0.18 does not record a file that is already
+    # signed, so the kernels may be missing from "sbctl verify": harmless.
     if [ "$SBCTL" -eq 1 ]; then
         sudo sbctl sign -s "$EFI/EFI/GRUB/grubx64.efi"
         for kernel in /boot/vmlinuz-*; do
@@ -172,6 +177,9 @@ update_grub_config() {
 update_grub_config "GRUB_DISABLE_OS_PROBER" "false"
 update_grub_config "GRUB_DISABLE_SUBMENU" "y"
 update_grub_config "GRUB_TIMEOUT" "8"
+# GRUB >= 2.16 adds an "EFI BootNext" entry for every firmware boot entry;
+# the firmware boot menu already lists them, so keep the GRUB menu short.
+update_grub_config "GRUB_DISABLE_BOOTNEXT" "true"
 
 # Theme Installation (cosmetic: never abort the install over it)
 THEME="grub-theme-vimix-very-dark-blue"
@@ -182,37 +190,6 @@ if [ -f "/usr/share/grub/themes/$THEME/theme.txt" ]; then
     update_grub_config "GRUB_THEME" "\"/usr/share/grub/themes/$THEME/theme.txt\""
 fi
 
-# --- TEMP (desktop dual boot): remove once the setup is validated ---
-# Hide the stale Windows ESP left on the Samsung 850 EVO data disk from the
-# GRUB menu (os-prober skip list, nothing is written to that disk).
-OLD_WIN_DISK=$(lsblk -dnpo NAME,MODEL | awk '/850 EVO/ {print $1; exit}' || true)
-if [ -n "$OLD_WIN_DISK" ]; then
-    OLD_ESP_UUID=$(lsblk -nro FSTYPE,UUID "$OLD_WIN_DISK" | awk '$1 == "vfat" {print $2; exit}' || true)
-    if [ -n "$OLD_ESP_UUID" ]; then
-        update_grub_config "GRUB_OS_PROBER_SKIP_LIST" "\"${OLD_ESP_UUID}@/efi/Microsoft/Boot/bootmgfw.efi\""
-    fi
-fi
-# --- END TEMP ---
-
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "--- Bootloader Configuration Complete ---"
-
-# --- TEMP (desktop dual boot): diagnostics, remove once the setup is validated ---
-# Also saved to ~/grub-diag.txt (cat it to see it again).
-grub_diag() {
-    echo "=================== grub.sh diag (temp v1) ==================="
-    echo "--- sbctl verify"
-    sudo sbctl verify 2>&1 || true
-    echo "--- efibootmgr"
-    sudo efibootmgr 2>&1 | cut -c1-110 || true
-    echo "--- /etc/default/grub"
-    grep -E '^GRUB_(DEFAULT|TIMEOUT|TOP_LEVEL|DISABLE_OS_PROBER|DISABLE_SUBMENU|OS_PROBER_SKIP_LIST|THEME)=' /etc/default/grub || true
-    echo "--- grub.cfg entries"
-    sudo grep -E '^(menuentry|submenu)' /boot/grub/grub.cfg | cut -c1-80 || true
-    echo "--- grub.cfg insmod"
-    { sudo grep -o 'insmod [a-z0-9_]*' /boot/grub/grub.cfg | awk '{print $2}' | sort -u | tr '\n' ' '; echo; } || true
-    echo "==============================================================="
-}
-grub_diag 2>&1 | tee "$HOME/grub-diag.txt"
-# --- END TEMP ---
