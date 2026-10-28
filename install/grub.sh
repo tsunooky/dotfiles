@@ -35,6 +35,23 @@ has_windows_files() {
     [ -f "$1/EFI/Microsoft/Boot/bootmgfw.efi" ] || [ -f "$1/bootmgr" ]
 }
 
+# sbctl reports "installed" once its signing keys exist. Here-strings instead of
+# "| grep -q": with pipefail, grep closing the pipe early can fail the test.
+has_sbctl_keys() {
+    command -v sbctl &>/dev/null || return 1
+    grep -Eq '"installed": *true' <<< "$(sudo sbctl status --json 2>/dev/null || true)"
+}
+
+# True when a firmware boot entry (whatever its label) already starts
+# \EFI\GRUB\grubx64.efi from the ESP mounted at $1.
+has_grub_boot_entry() {
+    local partuuid entries
+    partuuid=$(lsblk -no PARTUUID "$(findmnt -no SOURCE "$1")" 2>/dev/null || true)
+    [ -n "$partuuid" ] || return 1
+    entries=$(sudo efibootmgr 2>/dev/null || true)
+    grep -i "$partuuid" <<< "$entries" | grep -iF '\EFI\GRUB\grubx64.efi' > /dev/null
+}
+
 # --- 2. Deep Disk Scan (Windows) ---
 echo "• Scanning for other operating systems..."
 TEMP_MOUNTS=$(mktemp)
@@ -100,7 +117,37 @@ if is_uefi; then
         echo "✗ UEFI system but no EFI System Partition found mounted at /boot, /efi or /boot/efi."
         exit 1
     fi
-    sudo grub-install --target=x86_64-efi --efi-directory="$EFI" --bootloader-id=GRUB --recheck
+    GRUB_ARGS=(--target=x86_64-efi --efi-directory="$EFI" --bootloader-id=GRUB --recheck)
+
+    # Leave the firmware boot entries and boot order alone when an entry already
+    # starts this GRUB: re-running the dotfiles must not put GRUB back in front
+    # of another OS chosen as the default (e.g. Windows first, Arch via F12).
+    if has_grub_boot_entry "$EFI"; then
+        GRUB_ARGS+=(--no-nvram)
+    fi
+
+    # Secure Boot with sbctl keys: when Secure Boot is on, GRUB runs in lockdown
+    # mode and refuses to load modules from disk, so every module grub.cfg needs
+    # (theme, os-prober chainloading, firmware setup entry) is embedded in the
+    # image, shim_lock is disabled (no shim) and the image is signed below.
+    # Without sbctl keys, this is the plain install as before.
+    SBCTL=0
+    if has_sbctl_keys; then
+        SBCTL=1
+        GRUB_ARGS+=(--disable-shim-lock --modules="tpm part_gpt part_msdos fat ext2 ntfs normal linux chain search search_fs_uuid search_fs_file search_label configfile echo test true loadenv gzio all_video video gfxterm gfxterm_background gfxmenu font png jpeg minicmd reboot halt efifwsetup")
+        echo "• sbctl keys found: installing GRUB for Secure Boot."
+    fi
+
+    sudo grub-install "${GRUB_ARGS[@]}"
+
+    # -s saves each file in the sbctl database, so its pacman hook re-signs
+    # them on every kernel update. Signing an already signed file is a no-op.
+    if [ "$SBCTL" -eq 1 ]; then
+        sudo sbctl sign -s "$EFI/EFI/GRUB/grubx64.efi"
+        for kernel in /boot/vmlinuz-*; do
+            if [ -f "$kernel" ]; then sudo sbctl sign -s "$kernel"; fi
+        done
+    fi
 else
     if ! DISK=$(get_root_disk); then
         echo "✗ BIOS system but could not determine the disk holding / (source: $(findmnt -no SOURCE /))."
