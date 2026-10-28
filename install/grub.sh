@@ -130,13 +130,13 @@ if is_uefi; then
 
     # Secure Boot with sbctl keys: when Secure Boot is on, GRUB runs in lockdown
     # mode and refuses to load modules from disk, so every module grub.cfg needs
-    # (theme, os-prober chainloading, firmware setup entry) is embedded in the
+    # (theme, os-prober chainloading, firmware setup entry, 25_bli) is embedded in the
     # image, shim_lock is disabled (no shim) and the image is signed below.
     # Without sbctl keys, this is the plain install as before.
     SBCTL=0
     if has_sbctl_keys; then
         SBCTL=1
-        GRUB_ARGS+=(--disable-shim-lock --modules="tpm part_gpt part_msdos fat ext2 ntfs normal linux chain search search_fs_uuid search_fs_file search_label configfile echo test true loadenv gzio all_video video gfxterm gfxterm_background gfxmenu font png jpeg minicmd reboot halt efifwsetup")
+        GRUB_ARGS+=(--disable-shim-lock --modules="tpm part_gpt part_msdos fat ext2 ntfs normal linux chain search search_fs_uuid search_fs_file search_label configfile echo test true loadenv gzio all_video video gfxterm gfxterm_background gfxmenu font png jpeg minicmd reboot halt efifwsetup bli")
         echo "• sbctl keys found: installing GRUB for Secure Boot."
     fi
 
@@ -182,6 +182,37 @@ if [ -f "/usr/share/grub/themes/$THEME/theme.txt" ]; then
     update_grub_config "GRUB_THEME" "\"/usr/share/grub/themes/$THEME/theme.txt\""
 fi
 
+# --- TEMP (desktop dual boot): remove once the setup is validated ---
+# Hide the stale Windows ESP left on the Samsung 850 EVO data disk from the
+# GRUB menu (os-prober skip list, nothing is written to that disk).
+OLD_WIN_DISK=$(lsblk -dnpo NAME,MODEL | awk '/850 EVO/ {print $1; exit}' || true)
+if [ -n "$OLD_WIN_DISK" ]; then
+    OLD_ESP_UUID=$(lsblk -nro FSTYPE,UUID "$OLD_WIN_DISK" | awk '$1 == "vfat" {print $2; exit}' || true)
+    if [ -n "$OLD_ESP_UUID" ]; then
+        update_grub_config "GRUB_OS_PROBER_SKIP_LIST" "\"${OLD_ESP_UUID}@/efi/Microsoft/Boot/bootmgfw.efi\""
+    fi
+fi
+# --- END TEMP ---
+
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "--- Bootloader Configuration Complete ---"
+
+# --- TEMP (desktop dual boot): diagnostics, remove once the setup is validated ---
+# Also saved to ~/grub-diag.txt (cat it to see it again).
+grub_diag() {
+    echo "=================== grub.sh diag (temp v1) ==================="
+    echo "--- sbctl verify"
+    sudo sbctl verify 2>&1 || true
+    echo "--- efibootmgr"
+    sudo efibootmgr 2>&1 | cut -c1-110 || true
+    echo "--- /etc/default/grub"
+    grep -E '^GRUB_(DEFAULT|TIMEOUT|TOP_LEVEL|DISABLE_OS_PROBER|DISABLE_SUBMENU|OS_PROBER_SKIP_LIST|THEME)=' /etc/default/grub || true
+    echo "--- grub.cfg entries"
+    sudo grep -E '^(menuentry|submenu)' /boot/grub/grub.cfg | cut -c1-80 || true
+    echo "--- grub.cfg insmod"
+    { sudo grep -o 'insmod [a-z0-9_]*' /boot/grub/grub.cfg | awk '{print $2}' | sort -u | tr '\n' ' '; echo; } || true
+    echo "==============================================================="
+}
+grub_diag 2>&1 | tee "$HOME/grub-diag.txt"
+# --- END TEMP ---
